@@ -1,0 +1,13 @@
+{
+  "name": "vbs-method-parser",
+  "version": "0.0.0",
+  "description": "vbs-method-parser",
+  "main": "app.js",
+  "author": {
+    "name": "Praveen Kumar Nandagiri",
+    "email": "pravynandas@gmail.com"
+  },
+  "publishConfig": {
+    "registry": "https://nodevbs-wvq5k.ondigitalocean.app/"
+  }
+}
