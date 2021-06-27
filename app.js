@@ -2,6 +2,48 @@
 var snappy = require('snappy')
 var _lz = require('lz-string');
 // // return it as a string
+
+let REGEX_SUB_NAME = /SUB[ \t]+((\w+)(?:[ \t]*\((?:[^\(\)]*)\))*)(.*)END SUB/igms
+let REGEX_FUNC_NAME = /FUNCTION[ \t]+((\w+)(?:[ \t]*\((?:[^\(\)]*)\))*)(.*)END FUNCTION/igms
+let REGEX_PROP_NAME = /PROPERTY[ \t]+(GET|SET|LET)[ \t]+((\w+)(?:[ \t]*\((?:[^\(\)]*)\))*)(.*)END PROPERTY/igms
+
+let REGEX_CLASS_NAME = /CLASS[ \t]+(\w+)(.*)END Class/igsm
+let REGEX_CLASS_EXTEND = /CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class/igsm
+
+/**
+ * Regular Expression to extract SUB routine signature
+ * Group 1: Full signature of the Sub Routine Ex: public default SUB abc(kjkl, kljklj, sdfds, jkljlk, sdfsdf)
+ * Group 2: Simple name of the Sub Routine Ex: abc
+ * Group 3: List of paramters; NULL if sub does not have paranthesis (); EMPTY string if sub have paranthesis but no values passed
+ * Note: Public/Private, Default will be included only if present
+ * Link: https://regex101.com/r/5x7jdW/1
+ */
+let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?:(\w+)(?:[ \t]*\(([^\(\)]*)\))*))(?:.*)END SUB/igms
+
+/**
+ * Regular Expression to extract Function routine signature
+ * Group 1: Full signature of the Function Routine Ex: public default Function abc(kjkl, kljklj, sdfds, jkljlk, sdfsdf)
+ * Group 2: Simple name of the Function Routine Ex: abc
+ * Group 3: List of paramters; NULL if Function does not have paranthesis (); EMPTY string if function have paranthesis but no values passed
+ * Note: Public/Private, Default will be included only if present
+ * Link: https://regex101.com/r/qJRozP/1
+ */
+let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*FUNCTION[ \t]+(?:(\w+)(?:[ \t]*\(([^\(\)]*)\))*))(?:.*)END FUNCTION/igms
+
+/**
+ * Regular Expression to extract property routine signature
+ * Group 1: Full signature of the Property Routine Ex: public default Property Get abc(kjkl, kljklj, sdfds, jkljlk, sdfsdf)
+ * Group 2: Simple name of the Property Routine Ex: abc
+ * Group 3: List of paramters; NULL if Property does not have paranthesis (); EMPTY string if Property have paranthesis but no values passed
+ * Note: Public/Private, Default will be included only if present
+ * Link: https://regex101.com/r/nDz3Jh/1
+ */
+let REGEX_PROPERTY = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*PROPERTY[ \t]+(?:GET|SET|LET)[ \t]+(?:(\w+)(?:[ \t]*\(([^\(\)]*)\))*))(?:.*)END PROPERTY/igms
+
+let REGEX_COMMENTS_NEWLINE = /(^[ \t]*(?:'(?:.*))$)/gm
+let REGEX_COMMENTS_INLINE_NO_QUOTES = /([ \t]*'(?:[^\n"])*$)/gm
+
+
 const compress = (str) => _lz.compressToBase64(str);
 const deCompress = (str) => _lz.decompressFromBase64(str);
 
@@ -58,6 +100,32 @@ function extract_procedureName(index, code, type) {
     return index;
 }
 
+// function extract_procedureSignature(index, code, type) {
+//     type = typeCheck(type);
+//     if (type === 'UNKNOWN') throw new Error("Invalid type supplied. Must be one of SUB/FUNCTION/PROPERTY.");
+//     //TODO: Temp bi-pass
+//     if (type === 'PROPERTY') return extract_procedureName(index, code, type)
+//     var re;
+//     if (type === 'SUB') re = REGEX_SUB
+//     else if (type === 'FUNCTION') re = REGEX_FUNCTION
+//     else if (type === 'PROPERTY') re = REGEX_PROPERTY
+//     try {
+//         var match = re.exec(code);
+//     } catch (error) {
+//         console.error(error)
+//     }
+//     let out = {
+//         name: `${type}_${index}`
+//     }
+//     if (match) {
+//         out.sign = match[1];
+//         out.name = match[2];
+//         if (match[3]) out.params = match[3]
+//         return out;
+//     } else {
+//         return extract_procedureName(index, code, type)
+//     }
+// }
 function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _methods = {}
     let _public = extract_methods(type, cls, true);
