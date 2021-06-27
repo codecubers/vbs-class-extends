@@ -27,7 +27,10 @@ End Class ' Excel
 'comment over head	
 	' comment with tab
 	   ' comment with spaces
-Class abc extends Excel   'comments inline
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+                        Class abc extends Excel   'comments inline
 
 
 	 Private default Sub say
@@ -53,6 +56,33 @@ Class abc extends Excel   'comments inline
 	 End Sub
 		
 	
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
+'comment over head	
+	' comment with tab
+	   ' comment with spaces
 	Public Sub DeleteFile(file)
 		On Error Resume Next
 		objFSO.DeleteFile(file)
