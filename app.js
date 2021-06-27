@@ -127,22 +127,24 @@ function extract_procedureName(index, code, type) {
 //     }
 // }
 function extractProcedures(cls, type, _clsObj, _clsRemaining) {
+    let index = 1;
     let _methods = {}
     let _public = extract_methods(type, cls, true);
     if (_public) {
-        _public.forEach((sub, index) => {
+        _public.forEach((sub) => {
             let _name = extract_procedureName(index, sub, type);
             _methods[_name] = {
                 code: compress(sub),
                 index: index,
                 isPublic: true
             }
+            index++;
             _clsRemaining = _clsRemaining.replace(sub, 'PUBLIC_' + type + '_' + _name)
         })
     }
     let _private = extract_methods(type, cls, false);
     if (_private) {
-        _private.forEach((sub, index) => {
+        _private.forEach((sub) => {
             let _name = extract_procedureName(index, sub, type);
             if (!_methods.hasOwnProperty(_name)) {
                 _methods[_name] = {
@@ -150,11 +152,12 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
                     index: index,
                     isPublic: false
                 }
+                index++;
                 _clsRemaining = _clsRemaining.replace(sub, 'PRIVATE_' + type + '_' + _name)
             }
         })
     }
-    if (_methods) _clsObj[type.toLowerCase()] = _methods;
+    if (Object.keys(_methods).length > 0) _clsObj[type.toLowerCase()] = _methods;
     return _clsRemaining;
 }
 
