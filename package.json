@@ -1,7 +1,7 @@
 {
   "name": "vbs-method-parser",
-  "version": "0.0.0",
-  "description": "vbs-method-parser",
+  "version": "1.0.0",
+  "description": "Read And Parser vbscript files",
   "main": "app.js",
   "author": {
     "name": "Praveen Kumar Nandagiri",
@@ -9,5 +9,9 @@
   },
   "publishConfig": {
     "registry": "https://nodevbs-wvq5k.ondigitalocean.app/"
+  },
+  "dependencies": {
+    "lz-string": "^1.4.4",
+    "snappy": "^6.3.5"
   }
 }

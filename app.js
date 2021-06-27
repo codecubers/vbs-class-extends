@@ -1,19 +1,21 @@
 'use strict';
-//Object.defineProperty(exports, "__esModule", { value: true });
-function extract_functions(code, pub = false) {
-    let rx = (pub ? '[ \t]*PUBLIC[ \t]+' : '[ \t]*(?:PRIVATE|PROTECTED)*[ \t]*') + 'FUNCTION[ \t]+(?:.*[\r\n])*?(.*)END FUNCTION[ \t]*'
-    var re = new RegExp(rx, 'igm');
-    return code.match(re)
+var snappy = require('snappy')
+var _lz = require('lz-string');
+// // return it as a string
+const compress = (str) => _lz.compressToBase64(str);
+const deCompress = (str) => _lz.decompressFromBase64(str);
+
+function typeCheck(type) {
+    type = type.trim().toUpperCase();
+    return ['FUNCTION', 'SUB', 'PROPERTY'].includes(type) ? type : 'UNKNOWN';
 }
-function extract_subs(code, pub = false) {
-    let rx = (pub ? '[ \t]*PUBLIC[ \t]+' : '[ \t]*(?:PRIVATE|PROTECTED)*[ \t]*') + 'SUB[ \t]+(?:.*[\r\n])*?(.*)END SUB[ \t]*'
-    var re = new RegExp(rx, 'igm');
-    return code.match(re)
-}
-function extract_props(code, pub = false) {
-    let rx = (pub ? '[ \t]*PUBLIC[ \t]+' : '[ \t]*(?:PRIVATE|PROTECTED)*[ \t]*') + 'PROPERTY[ \t]+(?:GET|LET|SET)(?:.*[\r\n])*?(.*)END PROPERTY[ \t]*'
-    var re = new RegExp(rx, 'igm');
-    return code.match(re)
+
+function extract_methods(type, code, pub=false) {
+    type = typeCheck(type);
+    if (type === 'UNKNOWN') throw new Error("Invalid method type supplied. Must be one of SUB/FUNCTION/PROPERTY.")
+    let rx = (pub ? '[ \t]*PUBLIC[ \t]+' : '[ \t]*(?:PRIVATE|PROTECTED)*[ \t]*');
+    rx += `${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
+    return code.match(new RegExp(rx, 'igm'))
 }
 
 function extract_classes(code) {
@@ -35,14 +37,17 @@ function classExtends(code) {
     return match ? { base: match[1], _extends: match[2] } : null
 
 }
+
 function extract_className(code) {
     // console.log('searching class name in:' + code)
     var re = /CLASS[ \t]+(\w+)(.*)END Class/igsm
     var match = re.exec(code);
     return match[1]
 }
-function extract_procedureName(index, code, type='SUB') {
-    // console.log('searching class name in:' + code)
+
+function extract_procedureName(index, code, type) {
+    type = typeCheck(type);
+    if (type === 'UNKNOWN') throw new Error("Invalid type supplied. Must be one of SUB/FUNCTION/PROPERTY.");
     let i = (type === 'PROPERTY') ? 2 : 1;
     var re;
     if (type === 'SUB') re = /SUB[ \t]+(\w+)(.*)END SUB/igsm
@@ -53,132 +58,75 @@ function extract_procedureName(index, code, type='SUB') {
     return index;
 }
 
-function extractProcedures(cls, type, funcMethod, funcName, _clsObj, _clsRemaining) {
-    let _public = funcMethod(cls, true);
+function extractProcedures(cls, type, _clsObj, _clsRemaining) {
+    let _methods = {}
+    let _public = extract_methods(type, cls, true);
     if (_public) {
         _public.forEach((sub, index) => {
-            let _name = funcName(index, sub, type);
-            console.log('name-public:', _name);
-            _clsObj[_name] = {
-                code: sub,
+            let _name = extract_procedureName(index, sub, type);
+            _methods[_name] = {
+                code: compress(sub),
                 index: index,
                 isPublic: true
             }
-            //console.log('before2:', _clsRemaining)
             _clsRemaining = _clsRemaining.replace(sub, 'PUBLIC_' + type + '_' + _name)
-            //console.log('after2:', _clsRemaining)
         })
     }
-    let _private = funcMethod(cls, false);
+    let _private = extract_methods(type, cls, false);
     if (_private) {
         _private.forEach((sub, index) => {
-            let _name = funcName(index, sub, type);
-            if (!_clsObj.hasOwnProperty(_name)) {
-                console.log('name-private:', _name);
-                _clsObj[_name] = {
-                    code: sub,
+            let _name = extract_procedureName(index, sub, type);
+            if (!_methods.hasOwnProperty(_name)) {
+                _methods[_name] = {
+                    code: compress(sub),
                     index: index,
                     isPublic: false
                 }
-                //console.log('before1:', _clsRemaining)
                 _clsRemaining = _clsRemaining.replace(sub, 'PRIVATE_' + type + '_' + _name)
-                //console.log('after1:', _clsRemaining)
             }
         })
     }
+    if (_methods) _clsObj[type.toLowerCase()] = _methods;
     return _clsRemaining;
 }
-const fso = require('fs');
-let sample = fso.readFileSync('C:\\Users\\nanda\\git\\xps.local.npm\\vbs-excel-unpack\\build\\export-bundle.vbs').toString();
-// console.log(sample)
-let temp = sample;
-let classes = extract_classes(sample)
-// console.log(extract_className(sample))
-let i = 0
-let newClasses = []
-// let classFiles = {}
-classes.forEach(cls => {
-    let clsName = extract_className(cls);
-    // console.log(`class ${clsName}:`)
-    cls = removeCommentsStart(cls)
-    let _class = {
-        name: clsName
-    }
-    let ext = classExtends(cls);
-    if (ext) {
-        let { base, _extends } = ext;
-        _class.extends = _extends
-        // console.log(`class ${base} extends ${_extends}`)
-    }
-    _class.body = cls
-    // fso.writeFileSync('class-' + clsName + ".vbs",  cls)
-    // classFiles[clsName] = cls;
-    // console.log(cls)
 
+function extractVBSFileMethods(vbsBody) {
+    let newClasses = [];
+    vbsBody = removeCommentsStart(vbsBody)
+    let classes = extract_classes(vbsBody)
+    classes.forEach((cls) => {
+        let clsName = extract_className(cls);
+        // console.log("class:", clsName);
+        vbsBody = vbsBody.replace(cls, `CLASS_${clsName}`)
+        // compress(cls).then(compressedBody => {
+            // console.log("compressedBody:", compressedBody);
+            let _class = {
+                name: clsName,
+                body: compress(cls)
+            }
+    
+            let ext = classExtends(cls);
+            if (ext) {
+                let { base, _extends } = ext;
+                _class.extends = _extends
+            }
+            let _structure = cls;
+            _structure = extractProcedures(cls, 'PROPERTY', _class, _structure)
+            _structure = extractProcedures(cls, 'SUB', _class, _structure)
+            _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
+            _class.structure = _structure
+            newClasses.push(_class)
+        // })
+    });
+    return newClasses;
+}
 
-    // console.log('\r\npublic methods:')
-    let _clsTemp = cls;
-    //let _pubProps = extract_props(cls, true);
-    //if (_pubProps) {
-    //    _class.pubProps = _pubProps;
-    //    _pubProps.forEach((prop, index) => {
-    //        _clsTemp = _clsTemp.replace(prop, 'PUB_PROP_' + extract_procedureName(index, prop, 'PROPERTY'))
-    //    })
-    //}
-    let arrProps = {}
-    _clsTemp = extractProcedures(cls, 'PROPERTY', extract_props, extract_procedureName, arrProps, _clsTemp)
-    if (arrProps) _class.property = arrProps;
-    let arrSubs = {}
-    //let _allSubs = extract_subs(cls, false);
-    //if (_allSubs) {
-    //    _allSubs.forEach((sub, index) => {
-    //        arrSubs[extract_procedureName(index, sub, 'SUB')] = {
-    //            code: sub,
-    //            index: index,
-    //            isPublic: false
-    //        }
-    //        _clsTemp = _clsTemp.replace(sub, 'PRIVATE_SUB_' + extract_procedureName(index, sub, 'SUB'))
-    //    })
-    //}
-    //let _pubSubs = extract_subs(cls, true);
-    //if (_pubSubs) {
-    //    _pubSubs.forEach((sub, index) => {
-    //        arrSubs[extract_procedureName(index, sub, 'SUB')] = {
-    //            code: sub,
-    //            index: index,
-    //            isPublic: true
-    //        }
-    //        _clsTemp = _clsTemp.replace(sub, 'PUB_SUB_' + extract_procedureName(index, sub, 'SUB'))
-    //    })
-    //}
-    _clsTemp = extractProcedures(cls, 'SUB', extract_subs, extract_procedureName, arrSubs, _clsTemp)
-    if (arrSubs) _class.sub = arrSubs;
+function main() {
+    const fso = require('fs');
+    let vbsBody = fso.readFileSync('C:\\Users\\nanda\\git\\xps.local.npm\\vbs-excel-unpack\\build\\export-bundle.vbs').toString();
+    let newClasses = extractVBSFileMethods(vbsBody);
+    fso.writeFileSync('./remaining.vbs', vbsBody)
+    fso.writeFileSync('./classes-overall.json', JSON.stringify(newClasses, null, 2));
+}
 
-    let arrFuncs = {}
-    _clsTemp = extractProcedures(cls, 'FUNCTION', extract_functions, extract_procedureName, arrFuncs, _clsTemp)
-    if (arrFuncs) _class.function  = arrFuncs ;
-    //let _pubFuns = extract_functions(cls, true);
-    //if (_pubFuns) {
-    //    _class.pubFuncs = _pubFuns;
-    //    _pubFuns.forEach((fun, index) => {
-    //        _clsTemp = _clsTemp.replace(fun, 'PUB_FUN_' + extract_procedureName(index, fun, 'FUNC'))
-    //    })
-    //}
-    //TODO: Extract class initialize and terminates
-    //TODO: extract private sub/function/properties
-
-
-    _class.structure = _clsTemp
-    newClasses.push(_class)
-
-    temp = temp.replace(cls, ``)
-});
-
-// console.log(Object.keys(classFiles))
-
-// console.log(`remaining: ${temp}`)
-fso.writeFileSync('./remaining.vbs', temp)
-// console.log(extract_subs(temp))
-// console.log(extract_functions(temp));
-
-fso.writeFileSync('./classes-overall.json', JSON.stringify(newClasses, null, 2));
+main();
