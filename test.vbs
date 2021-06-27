@@ -1,8 +1,36 @@
+Extendable Class Excel
+
+	private m_index
+
+	Private Sub Class_Initialize()
+		m_index = 1
+	End Sub
+
+	Private Sub Class_Terminate()
+		m_index = -1
+	End Sub
+
+	Public default Property Let Index(i)
+		m_index = i
+	End Property
+
+	public Function GetIndex()
+		GetIndex = m_index
+	End Function
+
+	public function getName
+		getName = "Nto overridden"
+	End Function
+
+
+End Class ' Excel
 'comment over head	
 	' comment with tab
 	   ' comment with spaces
-Class abc   'comments inline
-	 Public default Sub say
+Class abc extends Excel   'comments inline
+
+
+	 Private default Sub say
 	 	WScript.Echo "Hi.''''''''"''''.' ."  ' "'"'"'" comment & string contains double quotes
 	 	WScript.Echo "1'"
 	 	WScript.Echo "2"'"
@@ -30,6 +58,10 @@ Class abc   'comments inline
 		objFSO.DeleteFile(file)
 		On Error GoTo 0
 	End Sub
+
+	Override Public Function GetIndex()
+		GetIndex = Super.GetIndex + 20
+	End Function
 	
 End Class
 

@@ -61,7 +61,8 @@ function extract_methods(type, code, pub=false) {
 }
 
 function extract_classes(code) {
-    var re = new RegExp('[ \t]*CLASS[ \t]*(?:.*[\r\n])*?(.*)END CLASS[ \t]*', 'igm');
+    // var re = new RegExp('([\\s]*EXTENDABLE)*[\\s]*CLASS[\\s]*(?:.*[\\r\\n])*?(.*)END CLASS[\\s]*', 'igm');
+    var re = /((?:[\s]*EXTENDABLE)*[\s]*CLASS[\s]*(?:.*[\r\n])*?(?:.*)END CLASS[\s]*)/igm
     return code.match(re)
 }
 
@@ -77,6 +78,14 @@ function classExtends(code) {
     var match = re.exec(code);
     // console.log('match', match)
     return match ? { base: match[1], _extends: match[2] } : null
+
+}
+
+function isClassExtendable(code) {
+    // var re = new RegExp('CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class', 'igsm')
+    var re = /EXTENDABLE[\s]+CLASS[\s]+(\w+)[\s]+(?:.*)END Class/igsm
+    var match = re.exec(code);
+    return match ? true: false
 
 }
 
@@ -175,6 +184,10 @@ function extractVBSFileMethods(vbsBody) {
                 name: clsName,
                 body: compress(cls)
             }
+
+            if (isClassExtendable(cls)) {
+                _class.extendable = true
+            }
     
             let ext = classExtends(cls);
             if (ext) {
@@ -194,7 +207,8 @@ function extractVBSFileMethods(vbsBody) {
 
 function main() {
     const fso = require('fs');
-    let vbsBody = fso.readFileSync('C:\\Users\\nanda\\git\\xps.local.npm\\vbs-excel-unpack\\build\\export-bundle.vbs').toString();
+    // let vbsBody = fso.readFileSync('C:\\Users\\nanda\\git\\xps.local.npm\\vbs-excel-unpack\\build\\export-bundle.vbs').toString();
+    let vbsBody = fso.readFileSync('test.vbs').toString();
     let newClasses = extractVBSFileMethods(vbsBody);
     fso.writeFileSync('./remaining.vbs', vbsBody)
     fso.writeFileSync('./classes-overall.json', JSON.stringify(newClasses, null, 2));
