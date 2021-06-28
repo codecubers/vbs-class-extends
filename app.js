@@ -19,7 +19,7 @@ let REGEX_CLASS_EXTEND = /CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/5x7jdW/1
  */
-let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?:(\w+)(?:[ \t]*\(([^\(\)]*)\))*))(?:.*)END SUB/igms
+let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?:(\w+)(?:[ \t]*\((?:[^\(\)]*)\))*))(?:.*)(END SUB)/igms
 
 /**
  * Regular Expression to extract Function routine signature
@@ -29,7 +29,7 @@ let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/qJRozP/1
  */
-let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION[\s]+(?:(\w+)(?:[\s]*\(([^\(\)]*)\))*))(?:.*)END FUNCTION/gims
+let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION[\s]+(?:(\w+)(?:[\s]*\((?:[^\(\)]*)\))*))(?:.*)(END FUNCTION)/gims
 
 /**
  * Regular Expression to extract property routine signature
@@ -39,7 +39,7 @@ let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/nDz3Jh/1
  */
-let REGEX_PROPERTY = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*PROPERTY[ \t]+(?:GET|SET|LET)[ \t]+(?:(\w+)(?:[ \t]*\(([^\(\)]*)\))*))(?:.*)END PROPERTY/igms
+let REGEX_PROPERTY = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*PROPERTY[ \t]+(?:GET|SET|LET)[ \t]+(?:(\w+)(?:[ \t]*\((?:[^\(\)]*)\))*))(?:.*)(END PROPERTY)/igms
 
 let REGEX_COMMENTS_NEWLINE = /(^[ \t]*(?:'(?:.*))$)/gm
 let REGEX_COMMENTS_INLINE_NO_QUOTES = /([ \t]*'(?:[^\n"])*$)/gm
@@ -48,6 +48,7 @@ let REGEX_EMPTY_LINE_TWO_OR_MORE = /([ \t]*[\r\n]){3,}/gm
 
 const compress = (str) => str; //_lz.compressToBase64(str);
 const deCompress = (str) => _lz.decompressFromBase64(str);
+const extractBody = (code, sign, end) => code.substring((code.indexOf(sign) + sign.length), code.indexOf(end));
 
 function typeCheck(type) {
     type = type.trim().toUpperCase();
@@ -57,6 +58,7 @@ function typeCheck(type) {
 function extract_methods(type, code, pub=false) {
     type = typeCheck(type);
     if (type === 'UNKNOWN') throw new Error("Invalid method type supplied. Must be one of SUB/FUNCTION/PROPERTY.")
+    
     let rx = (pub ? `[ \t]*PUBLIC[ \t]*` : `[ \t]*(?:PRIVATE)*[ \t]*`);
     rx += `${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
     // console.log("rx:", rx)
@@ -137,8 +139,10 @@ function extract_procedureSignature(index, code, type) {
         }
         //console.log(m)
         // The result can be accessed through the `m`-variable.
+        // console.log("re:", re)
+        // console.log('index:' + index + ' code:', code);
         m.forEach((match, groupIndex) => {
-            //console.log(`Found match, group ${groupIndex}: ${match}`);
+            // console.log(`Found match, group ${groupIndex}: ${match}`);
         });
     }
     var match = re.exec(code);
@@ -148,7 +152,7 @@ function extract_procedureSignature(index, code, type) {
     if (match) {
         out.sign = match[1];
         out.name = match[2];
-        if (match[3]) out.params = match[3]
+        out.end = match[3]
     } else {
         console.log("ERROR while exracting signature")
         console.log("re: ", re)
@@ -160,19 +164,22 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let index = 1;
     let _methods = {}
     let _public;
-    if (type === 'SUB') {
-        _public = extract_subs(cls, true);
-    } else {
+    // if (type === 'SUB') {
+    //     _public = extract_subs(cls, true);
+    // } else {
         _public = extract_methods(type, cls, true);
-    }
+    // }
     if (_public) {
         _public.forEach((sub) => {
-            let {name, sign, params} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end} = extract_procedureSignature(index, sub, type);
+            // console.log('pub-name:', name)
             let _upper = name.toUpperCase();
             _methods[_upper] = {
                 name: name,
                 sign: sign,
                 code: compress(sub),
+                end: end,
+                body: extractBody(sub, sign, end),
                 index: index,
                 isPublic: true
             }
@@ -181,21 +188,24 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
         })
     }
     let _private;
-    if (type === 'SUB') {
-        _private = extract_subs(cls, false);
-    } else {
+    // if (type === 'SUB') {
+    //     _private = extract_subs(cls, false);
+    // } else {
         _private = extract_methods(type, cls, false);
-    }
+    // }
     // console.log("sub", _private)
     if (_private) {
         _private.forEach((sub) => {
-            let {name, sign, params} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end} = extract_procedureSignature(index, sub, type);
+            // console.log('pvt-name:', name)
             let _upper = name.toUpperCase();
             if (!_methods.hasOwnProperty(_upper)) {
                 _methods[_upper] = {
                     name: name,
                     sign: sign,
                     code: compress(sub),
+                    end: end,
+                    body: extractBody(sub, sign, end),
                     index: index,
                     isPublic: false
                 }
@@ -212,6 +222,7 @@ function extractVBSFileMethods(vbsBody) {
     let newClasses = [];
     vbsBody = removeCommentsStart(vbsBody)
     vbsBody = removeEmptyLines(vbsBody)
+    fso.writeFileSync( `export-bundle-pretty.vbs`, vbsBody);
     let classes = extract_classes(vbsBody)
     classes.forEach((cls) => {
         let clsName = extract_className(cls);
@@ -245,7 +256,7 @@ function extractVBSFileMethods(vbsBody) {
 }
 
 function main() {
-    let vbsBody = fso.readFileSync('C:\\Users\\nanda\\git\\xps.local.npm\\vbs-excel-unpack\\build\\export-bundle.vbs').toString();
+    let vbsBody = fso.readFileSync('export-bundle.vbs').toString();
     // let vbsBody = fso.readFileSync('test.vbs').toString();
     // vbsBody = vbsBody.replace(/'/g, "\\'");
     // vbsBody = vbsBody.replace(/"/g, '\\"');
