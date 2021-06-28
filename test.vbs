@@ -10,7 +10,7 @@ Extendable Class Excel
 		m_index = -1
 	End Sub
 
-	Public default Property Let Index(i)
+	Public Default   Property Let Index(i)
 		m_index = i
 	End Property
 

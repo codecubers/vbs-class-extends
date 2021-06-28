@@ -2,6 +2,8 @@
 var snappy = require('snappy')
 var _lz = require('lz-string');
 const fso = require('fs');
+
+let clsNoMethods;
 // // return it as a string
 
 let REGEX_SUB_NAME = /SUB[ \t]+((\w+)(?:[ \t]*\((?:[^\(\)]*)\))*)(.*)END SUB/igms
@@ -19,7 +21,7 @@ let REGEX_CLASS_EXTEND = /CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/5x7jdW/1
  */
-let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?:(\w+)(?:[ \t]*\((?:[^\(\)]*)\))*))(?:.*)(END SUB)/igms
+let REGEX_SUB =      /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?:(\w+)(?:[ \t]*\((?:[^\(\)]*)\))*))(?:.*)(END SUB)/igms
 
 /**
  * Regular Expression to extract Function routine signature
@@ -29,7 +31,7 @@ let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/qJRozP/1
  */
-let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION[ \t]+(?:(\w+)(?:[\s]*\((?:[^\(\)]*)\))*))(?:.*)(END FUNCTION)/gims
+let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*FUNCTION[ \t]+(?:(\w+)(?:[\s]*\((?:[^\(\)]*)\))*))(?:.*)(END FUNCTION)/gims
 
 /**
  * Regular Expression to extract property routine signature
@@ -39,7 +41,7 @@ let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/nDz3Jh/1
  */
-let REGEX_PROPERTY = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*PROPERTY[ \t]+(?:GET|SET|LET)[ \t]+(?:(\w+)(?:[ \t]*\((?:[^\(\)]*)\))*))(?:.*)(END PROPERTY)/igms
+let REGEX_PROPERTY = /((?:(?:PUBLIC|PRIVATE)[ \t]*)*(?:(?:DEFAULT)[ \t]*)*PROPERTY[ \t]+(?:GET|SET|LET)[ \t]+(?:(\w+)(?:[ \t]*\((?:[^\(\)]*)\))*))(?:.*)(END PROPERTY)/igms
 
 let REGEX_COMMENTS_NEWLINE = /(^[ \t]*(?:'(?:.*))$)/gm
 let REGEX_COMMENTS_INLINE_NO_QUOTES = /([ \t]*'(?:[^\n"])*$)/gm
@@ -60,7 +62,7 @@ function extract_methods(type, code, pub=false) {
     if (type === 'UNKNOWN') throw new Error("Invalid method type supplied. Must be one of SUB/FUNCTION/PROPERTY.")
     
     let rx = (pub ? `[ \t]*PUBLIC[ \t]*` : `[ \t]*(?:PRIVATE)*[ \t]*`);
-    rx += `${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
+    rx += `(?:DEFAULT[ \t]*)${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
     // console.log("rx:", rx)
     return code.match(new RegExp(rx, 'igmu'))
 }
@@ -139,10 +141,10 @@ function extract_procedureSignature(index, code, type) {
         }
         //console.log(m)
         // The result can be accessed through the `m`-variable.
-        // console.log("re:", re)
-        // console.log('index:' + index + ' code:', code);
+        // if (type === 'PROPERTY') console.log("re:", re)
+        // if (type === 'PROPERTY') console.log('index:' + index + ' code:', code);
         m.forEach((match, groupIndex) => {
-            // console.log(`Found match, group ${groupIndex}: ${match}`);
+            // if (type === 'PROPERTY') console.log(`Found match, group ${groupIndex}: ${match}`);
         });
     }
     var match = re.exec(code);
@@ -185,6 +187,7 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
             }
             index++;
             _clsRemaining = _clsRemaining.replace(sub, 'PUBLIC_' + type + '_' + _upper)
+            clsNoMethods = clsNoMethods.replace(sub, '')
         })
     }
     let _private;
@@ -211,6 +214,7 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
                 }
                 index++;
                 _clsRemaining = _clsRemaining.replace(sub, 'PRIVATE_' + type + '_' + _upper)
+                clsNoMethods = clsNoMethods.replace(sub, '')
             }
         })
     }
@@ -245,10 +249,12 @@ function extractVBSFileMethods(vbsBody) {
             _class.extendsClass = _extends
         }
         let _structure = cls;
+        clsNoMethods = cls;
         _structure = extractProcedures(cls, 'PROPERTY', _class, _structure)
         _structure = extractProcedures(cls, 'SUB', _class, _structure)
         _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
         _class.structure = _structure
+        _class.noMethods = clsNoMethods
         newClasses.push(_class)
 
     });
