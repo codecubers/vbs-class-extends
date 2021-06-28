@@ -29,7 +29,7 @@ let REGEX_SUB = /((?:(?:PUBLIC|PRIVATE)[ \t]+)*(?:(?:DEFAULT)[ \t]+)*SUB[ \t]+(?
  * Note: Public/Private, Default will be included only if present
  * Link: https://regex101.com/r/qJRozP/1
  */
-let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION[\s]+(?:(\w+)(?:[\s]*\((?:[^\(\)]*)\))*))(?:.*)(END FUNCTION)/gims
+let REGEX_FUNCTION = /((?:(?:PUBLIC|PRIVATE)[\s]+)*(?:(?:DEFAULT)[\s]+)*FUNCTION[ \t]+(?:(\w+)(?:[\s]*\((?:[^\(\)]*)\))*))(?:.*)(END FUNCTION)/gims
 
 /**
  * Regular Expression to extract property routine signature
@@ -82,7 +82,7 @@ function extract_classes(code) {
     return code.match(re)
 }
 
-const removeCommentsStart = (code) => code.replace(REGEX_COMMENTS_INLINE_NO_QUOTES, '');
+const removeCommentsStart = (code) => code.replace(REGEX_COMMENTS_NEWLINE, '').replace(REGEX_COMMENTS_INLINE_NO_QUOTES, '');
 const removeEmptyLines = (code) => code.replace(REGEX_EMPTY_LINE_TWO_OR_MORE, '\n\n');
 
 function classExtends(code) {
@@ -256,8 +256,8 @@ function extractVBSFileMethods(vbsBody) {
 }
 
 function main() {
-    let vbsBody = fso.readFileSync('export-bundle.vbs').toString();
-    // let vbsBody = fso.readFileSync('test.vbs').toString();
+    // let vbsBody = fso.readFileSync('export-bundle.vbs').toString();
+    let vbsBody = fso.readFileSync('test.vbs').toString();
     // vbsBody = vbsBody.replace(/'/g, "\\'");
     // vbsBody = vbsBody.replace(/"/g, '\\"');
     // console.log("body", vbsBody)
