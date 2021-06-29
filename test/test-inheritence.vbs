@@ -1,8 +1,25 @@
 Extendable Class ClassA
+
+    Private m_PubProp;
+    Public Property Get PubProp
+        Set PubProp = m_PubProp
+    End Property
+    Public Property Set PubProp(Value)
+        Set m_PubProp = Value
+    End Property
+
+    Public Property Let PubPropLet(Value)
+        m_PubProp = Value
+    End Property
+
     Public Sub PubSub(i, j)
         k = i + j
         WScript.Echo "K is (i + j): " & k
     End Sub
+
+    Public Function PubFunc
+        PubFunc = "I'm a func"
+    End Function
 End Class
 
 Extendable Class ClassB extends ClassA

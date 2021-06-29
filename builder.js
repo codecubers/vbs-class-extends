@@ -10,7 +10,15 @@ const addSuperPublicMethods = ( structure, arrMethods, type, superClsName ) => {
         let superCall = sign.substring(sign.indexOf(name))
         if (isPublic) {
             let _sign = `Public ${type} ${sign.substring(sign.indexOf(name))}`;
-            let method = `${_sign} : ${name} = m_${superClsName}.${superCall} : ${end}`;
+            let callSuper = `${name} = m_${superClsName}.${superCall}`
+            if (type.includes(' Let ')) {
+                callSuper = `m_${superClsName}.${name} = ${callSuper.replace(name, '')}`
+            } else if (type.includes(' Set ')) {
+                callSuper = `set m_${superClsName}.${name} = ${callSuper.replace(name, '')}`
+            } else if (type === 'Sub') {
+                callSuper = `call m_${superClsName}.${superCall}`
+            }
+            let method = `${_sign} : ${callSuper} : ${end}`;
             structure = appendMethod(structure, method)
         }
     })
