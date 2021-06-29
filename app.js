@@ -62,7 +62,7 @@ function extract_methods(type, code, pub=false) {
     if (type === 'UNKNOWN') throw new Error("Invalid method type supplied. Must be one of SUB/FUNCTION/PROPERTY.")
     
     let rx = (pub ? `[ \t]*PUBLIC[ \t]*` : `[ \t]*(?:PRIVATE)*[ \t]*`);
-    rx += `(?:DEFAULT[ \t]*)${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
+    rx += `((?:DEFAULT)*[ \t]*)${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
     // console.log("rx:", rx)
     return code.match(new RegExp(rx, 'igmu'))
 }
@@ -254,7 +254,7 @@ function extractVBSFileMethods(vbsBody) {
         _structure = extractProcedures(cls, 'SUB', _class, _structure)
         _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
         _class.structure = _structure
-        _class.noMethods = clsNoMethods
+        _class.noMethods = removeEmptyLines(clsNoMethods);
         newClasses.push(_class)
 
     });
@@ -273,3 +273,10 @@ function main() {
 }
 
 main();
+
+// TODO(s):
+// Function return types can be objects (Set x = y); Need to capture this information in class.json object and will be added when writing extends class.
+// Overriding a super class method in child class with keyword Override (or something similar)
+// Test multi-level class inheritends. Ex: a extends b extends c
+// Test multi-parent extension. Ex: a extends b,c
+// Super class init() or similar methods (using Default keyword); Or call parent class name with Super.init() or something similar approach.

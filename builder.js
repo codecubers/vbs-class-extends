@@ -4,12 +4,30 @@ const classes = require('./classes-overall.json');
 var _lz = require('lz-string');
 const _compress = (str) => _lz.compressToBase64(str);
 const _deCompress = (str) => _lz.decompressFromBase64(str);
+const appendMethod = (cls, m) => cls.replace('End Class', `\n\n\t${m}\nEnd Class`)
+const insertMethod = (cls, sign, m) => cls.replace(`PUBLIC_${sign}`, m)
+                                            .replace(`PRIVATE_${sign}`, m)
+                                                .replace(`${sign}`, m)
+const addSuperPublicMethods = ( structure, arrMethods, type, superClsName ) => {
+    if (!arrMethods) return structure;
+    Object.values(arrMethods).forEach((method) => {
+        let {name, sign, isPublic, end} = method
+        let superCall = sign.substring(sign.indexOf(name))
+        if (isPublic) {
+            let _sign = `Public ${type} ${sign.substring(sign.indexOf(name))}`;
+            let method = `${_sign} : ${name} = m_${superClsName}.${superCall} : ${end}`;
+            structure = appendMethod(structure, method)
+        }
+    })
+    return structure;
+}
 
 // console.log(classes)
 let classNames = []
 let extendables = {}
+
 classes.forEach(cls => {
-    let {name, isExtendable, isExtends, extendsClass, subs, functions, propertys, structure } = cls;
+    let { name, isExtendable } = cls;
     if (classNames.includes(name)) {
         throw new Error(`Class ${name} is already declare. Cannot be added again.`)
     } 
@@ -20,7 +38,7 @@ classes.forEach(cls => {
 });
 
 classes.forEach(cls => {
-    let {name, isExtendable, isExtends, extendsClass, subs, functions, propertys, structure } = cls;
+    let {name, isExtendable, isExtends, extendsClass, subs, functions, propertys, structure, noMethods } = cls;
     if (isExtends) {
         if (!classNames.includes(extendsClass)) {
             throw new Error(`Class ${name} extends ${extendsClass} but ${extendsClass} is not declared.`)
@@ -28,52 +46,104 @@ classes.forEach(cls => {
         if (!extendables.hasOwnProperty(extendsClass)) {
             throw new Error(`Class ${name} extends ${extendsClass} but ${extendsClass} is not extendable.`)
         }
-        let _extenable = extendsClass[extendsClass];
 
-        // if (subs.hasOwnProperty('CLASS_INITIALIZE')) {
-
-        // }
+        let constructor;
         if (subs) {       
             Object.entries(subs).forEach(([subNameUpper, sub]) => {
-                let subName = sub.name;
-                let isSubPublic = sub.isPublic;
-                let subCode = sub.code; // _deCompress(sub.code);
-                console.log(subCode)
-                structure = structure.replace(`PUBLIC_SUB_${subNameUpper}`, subCode)
-                structure = structure.replace(`PRIVATE_SUB_${subNameUpper}`, subCode)
-                structure = structure.replace(`SUB_${subNameUpper}`, subCode)
-                if (isSubPublic) {
-                    structure = structure.replace('End Class', `\r\n\r\n\tPublic Sub ${subName} : ${subName} = m_${extendsClass}.${subName} : End Sub \r\n\r\nEnd Class`)
+                if (subNameUpper === 'CLASS_INITIALIZE') {
+                    constructor = sub;
+                    structure = insertMethod(structure, `SUB_${subNameUpper}`, '')
+                } else {
+                    structure = insertMethod(structure, `SUB_${subNameUpper}`, sub.code)
                 }
             })
         }
+
         if (functions) {
             Object.entries(functions).forEach(([funcNameUpper, func]) => {
-                let funcName = func.name;
-                let isFuncPublic = func.isPublic;
-                let funcCode = func.code; //_deCompress(func.code);
-                structure = structure.replace(`PUBLIC_FUNCTION_${funcNameUpper}`, funcCode)
-                structure = structure.replace(`PRIVATE_FUNCTION_${funcNameUpper}`, funcCode)
-                structure = structure.replace(`FUNCTION_${funcNameUpper}`, funcCode)
-                if (isFuncPublic) {
-                    structure = structure.replace('End Class', `\r\n\r\n\tPublic Function ${funcName} : ${funcName} = m_${extendsClass}.${funcName} : End Function \r\n\r\nEnd Class`)
-                }
+                structure = insertMethod(structure, `FUNCTION_${funcNameUpper}`, func.code)
             })
         }
+
         if(propertys) {
             Object.entries(propertys).forEach(([propNameUpper, prop]) => {
-                let propName = prop.name;
-                let isPropPublic = prop.isPublic;
-                let propCode = prop.code; //_deCompress(prop.code);
-                structure = structure.replace(`PUBLIC_PROPERTY_${propNameUpper}`, propCode)
-                structure = structure.replace(`PRIVATE_PROPERTY_${propNameUpper}`, propCode)
-                structure = structure.replace(`PROPERTY_${propNameUpper}`, propCode)
-                if (isPropPublic) {
-                    structure = structure.replace('End Class', `\r\n\r\n\tPublic Property ${propName} : ${propName} = m_${extendsClass}.${propName} : End Property \r\n\r\nEnd Class`)
+                structure = insertMethod(structure, `PROPERTY_${propNameUpper}`, prop.code)
+            })
+        }
+
+        let superClass = extendables[extendsClass];
+        structure = addSuperPublicMethods(structure, superClass.subs, "Sub", extendsClass)
+        structure = addSuperPublicMethods(structure, superClass.functions, "Function", extendsClass)
+        structure = addSuperPublicMethods(structure, superClass.propertys, "Property", extendsClass)
+
+        if (!constructor) {
+            constructor = {
+                    sign: "Private Sub Class_Initialize",
+                    end: "End Sub",
+                    body: ""
+                }
+        }
+
+        let {sign, end, body} = constructor;
+        let method = `${sign}\n\t\tset m_${extendsClass} = new ${extendsClass}`;
+        if (body) {
+            method += `\n\t\t${body}`
+        }
+        method += `\n\t${end}\n\n`
+        structure = appendMethod(structure, method)
+        noMethods = appendMethod(noMethods, method)
+
+        structure = structure.replace(/[\s]*EXTENDS[\s*](.*)/i, '');
+        fs.writeFileSync(`${name}_replace.vbs`, structure);
+    }
+});
+
+
+classes.forEach(cls => {
+    let {name, isExtendable, isExtends, extendsClass, subs, functions, propertys, structure, noMethods } = cls;
+    if (isExtends) {
+        if (!classNames.includes(extendsClass)) {
+            throw new Error(`Class ${name} extends ${extendsClass} but ${extendsClass} is not declared.`)
+        }
+        if (!extendables.hasOwnProperty(extendsClass)) {
+            throw new Error(`Class ${name} extends ${extendsClass} but ${extendsClass} is not extendable.`)
+        }
+
+        let constructor;
+        if (subs && subs.CLASS_INITIALIZE) constructor = subs.CLASS_INITIALIZE;
+        if (!constructor) {
+            constructor = {
+                    sign: "Private Sub Class_Initialize",
+                    end: "End Sub",
+                    body: ""
+                }
+        }
+        let {sign, end, body} = constructor;
+        let method = `\n\nPrivate m_${extendsClass}\n\n`
+        method += `${sign}\n\t\tset m_${extendsClass} = new ${extendsClass}`;
+        if (body) method += `\n\t\t${body}`
+        method += `\n\t${end}\n\n`
+        noMethods = appendMethod(noMethods, method)
+
+        if (propertys) Object.values(propertys).forEach(method => noMethods = appendMethod(noMethods, method.code))
+        if (functions) Object.values(functions).forEach(method => noMethods = appendMethod(noMethods, method.code))
+        if (subs) {       
+            Object.entries(subs).forEach(([subNameUpper, sub]) => {
+                if (subNameUpper === 'CLASS_INITIALIZE') {
+                    noMethods = appendMethod(noMethods, '')
+                } else {
+                    noMethods = appendMethod(noMethods, sub.code)
                 }
             })
         }
-        structure = structure.replace(/[\s]*EXTENDS[\s*](.*)/i, '');
-        fs.writeFileSync(`${name}.vbs`, structure);
+
+        let superClass = extendables[extendsClass];
+        noMethods = addSuperPublicMethods(noMethods, superClass.subs, "Sub", extendsClass)
+        noMethods = addSuperPublicMethods(noMethods, superClass.functions, "Function", extendsClass)
+        noMethods = addSuperPublicMethods(noMethods, superClass.propertys, "Property", extendsClass)
+
+
+        noMethods = noMethods.replace(/[\s]*EXTENDS[\s*](.*)/i, '');
+        fs.writeFileSync(`${name}_reconstruct.vbs`, noMethods);
     }
 });

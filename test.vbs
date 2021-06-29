@@ -2,7 +2,7 @@ Extendable Class Excel
 
 	private m_index
 
-	Private Sub Class_Initialize()
+	Private Sub Class_Initialize
 		m_index = 1
 	End Sub
 
@@ -10,8 +10,8 @@ Extendable Class Excel
 		m_index = -1
 	End Sub
 
-	Public Default   Property Let Index(i)
-		m_index = i
+	Public Default   Property Let Index(i, j, k)
+		m_index = i + j + k
 	End Property
 
 	public Function GetIndex()
@@ -19,9 +19,12 @@ Extendable Class Excel
 	End Function
 
 	public function getName
-		getName = "Nto overridden"
+		getName = "Not overridden"
 	End Function
 
+	public Sub pubSub(i, j, k)
+		WScript.Echo "This is public sub(" & i & j & k & ")"
+	End Sub
 
 End Class ' Excel
 'comment over head	
@@ -32,6 +35,10 @@ End Class ' Excel
 	   ' comment with spaces
                         Class abc extends Excel   'comments inline
 
+
+	Private Sub Class_Initialize
+	 	WScript.Echo "I'm child."
+	End Sub
 
 	 Private default Sub say
 	 	WScript.Echo "Hi.''''''''"''''.' ."  ' "'"'"'" comment & string contains double quotes
@@ -89,7 +96,7 @@ End Class ' Excel
 		On Error GoTo 0
 	End Sub
 
-	Override Public Function GetIndex()
+	Public Function GetIndex()
 		GetIndex = Super.GetIndex + 20
 	End Function
 	
