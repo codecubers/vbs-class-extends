@@ -262,8 +262,9 @@ function extractVBSFileMethods(vbsBody) {
 }
 
 function main() {
-    // let vbsBody = fso.readFileSync('export-bundle.vbs').toString();
-    let vbsBody = fso.readFileSync('test.vbs').toString();
+    // let vbsBody = fso.readFileSync('test/export-bundle.vbs').toString();
+    // let vbsBody = fso.readFileSync('test/test-main.vbs').toString();
+    let vbsBody = fso.readFileSync('test/test-inheritence.vbs').toString();
     // vbsBody = vbsBody.replace(/'/g, "\\'");
     // vbsBody = vbsBody.replace(/"/g, '\\"');
     // console.log("body", vbsBody)

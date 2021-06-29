@@ -36,7 +36,7 @@ classes.forEach(cls => {
         extendables[name] = cls;
     }
 });
-
+/*
 classes.forEach(cls => {
     let {name, isExtendable, isExtends, extendsClass, subs, functions, propertys, structure, noMethods } = cls;
     if (isExtends) {
@@ -97,7 +97,7 @@ classes.forEach(cls => {
         fs.writeFileSync(`${name}_replace.vbs`, structure);
     }
 });
-
+*/
 
 classes.forEach(cls => {
     let {name, isExtendable, isExtends, extendsClass, subs, functions, propertys, structure, noMethods } = cls;
@@ -144,6 +144,6 @@ classes.forEach(cls => {
 
 
         noMethods = noMethods.replace(/[\s]*EXTENDS[\s*](.*)/i, '');
-        fs.writeFileSync(`${name}_reconstruct.vbs`, noMethods);
+        fs.writeFileSync(`test/${name}_reconstruct.vbs`, noMethods);
     }
 });
