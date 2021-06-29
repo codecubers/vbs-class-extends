@@ -10,7 +10,7 @@ function extract_methods(type, code, pub=false) {
     if (type === 'UNKNOWN') throw new Error("Invalid method type supplied. Must be one of SUB/FUNCTION/PROPERTY.")
     
     let rx = (pub ? `[ \t]*PUBLIC[ \t]*` : `[ \t]*(?:PRIVATE)*[ \t]*`);
-    rx += `((?:DEFAULT)*[ \t]*)${type}[ \t]+(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
+    rx += `((?:DEFAULT)*[ \t]*)${type}[ \t]+(?:(GET|SET|LET)[ \t]*)*(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
     // console.log("rx:", rx)
     return code.match(new RegExp(rx, 'igmu'))
 }
@@ -35,7 +35,12 @@ function isClassExtendable(code) {
     var re = /EXTENDABLE[\s]+CLASS[\s]+(\w+)[\s]+(?:.*)END Class/igsm
     var match = re.exec(code);
     return match ? true: false
+}
 
+function propertyType(propSign) {
+    var re = /[ ](GET|SET|LET)[ ]/igsm
+    var match = re.exec(propSign);
+    return match ? match[1] : null;
 }
 
 function extract_className(code) {
@@ -62,8 +67,10 @@ function extract_procedureSignature(index, code, type) {
         }
         //console.log(m)
         // The result can be accessed through the `m`-variable.
-        // if (type === 'PROPERTY') console.log("re:", re)
-        // if (type === 'PROPERTY') console.log('index:' + index + ' code:', code);
+        // if (type === 'PROPERTY') 
+        // console.log("re:", re)
+        // if (type === 'PROPERTY') 
+        // console.log('index:' + index + ' code:', code);
         m.forEach((match, groupIndex) => {
             // if (type === 'PROPERTY') console.log(`Found match, group ${groupIndex}: ${match}`);
         });
@@ -72,30 +79,41 @@ function extract_procedureSignature(index, code, type) {
     let out = {
         name: `${type}_${index}`
     }
+    // if (type === 'PROPERTY') 
+    console.log('\n\n' + match);
     if (match) {
         out.sign = match[1];
-        out.name = match[2];
-        out.end = match[3]
+        out.absName = match[4]
+        if (type === 'PROPERTY') {
+            out.name = match[4] + '.' + match[2];
+        } else {
+            out.name = match[4];
+        }
+        out.end = match[7]
     } else {
         console.log("ERROR while exracting signature")
         console.log("re: ", re)
         console.log("code:", code)
     }
+    console.log('out object to be returned:', out)
     return out;
 }
+//TODO: Combine these two sections
 function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let index = 1;
     let _methods = {}
     let _public = extract_methods(type, cls, true);
     if (_public) {
         _public.forEach((sub) => {
-            let {name, sign, end} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end, absName} = extract_procedureSignature(index, sub, type);
+            if (type === 'PROPERTY') {
+                console.log('Property sign: ', sign)
+                console.log('Property name: ', name)
+            }
             let _upper = name.toUpperCase();
             _methods[_upper] = {
-                name: name,
-                sign: sign,
+                name, sign, end, absName,
                 code: FUNC.compress(sub),
-                end: end,
                 body: extractBody(sub, sign, end),
                 index: index,
                 isPublic: true
@@ -108,14 +126,12 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _private = extract_methods(type, cls, false);
     if (_private) {
         _private.forEach((sub) => {
-            let {name, sign, end} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end, absName} = extract_procedureSignature(index, sub, type);
             let _upper = name.toUpperCase();
             if (!_methods.hasOwnProperty(_upper)) {
                 _methods[_upper] = {
-                    name: name,
-                    sign: sign,
+                    name, sign, end, absName,
                     code: FUNC.compress(sub),
-                    end: end,
                     body: extractBody(sub, sign, end),
                     index: index,
                     isPublic: false
@@ -130,14 +146,15 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     return _clsRemaining;
 }
 
-function extractVBSFileMethods(vbsBody) {
+function extractVBSFileMethods() {
     let newClasses = [];
-    vbsBody = FUNC.removeCommentsStart(vbsBody)
-    vbsBody = FUNC.removeEmptyLines(vbsBody)
-    let classes = extract_classes(vbsBody)
+    global.master = FUNC.removeCommentsStart(global.master)
+    global.master = FUNC.removeEmptyLines(global.master)
+    let classes = extract_classes(global.master)
     classes.forEach((cls) => {
         let clsName = extract_className(cls);
-        vbsBody = vbsBody.replace(cls, `CLASS_${clsName}`)
+        global.master = global.master.replace(cls, `\tCLASS_${clsName}\n\n`)
+        //console.log('remaining:', global.master)
         let _class = {
             name: clsName,
             body: FUNC.compress(cls)
@@ -153,13 +170,17 @@ function extractVBSFileMethods(vbsBody) {
             _class.isExtends = true;
             _class.extendsClass = _extends
         }
+
         let _structure = cls;
         clsNoMethods = cls;
+
         _structure = extractProcedures(cls, 'PROPERTY', _class, _structure)
         _structure = extractProcedures(cls, 'SUB', _class, _structure)
         _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
         _class.structure = _structure
+        
         _class.noMethods = FUNC.removeEmptyLines(clsNoMethods);
+
         newClasses.push(_class)
 
     });

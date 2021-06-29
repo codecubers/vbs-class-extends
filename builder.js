@@ -1,16 +1,25 @@
 const fs = require('fs');
+const { removeEmptyLines, deCompress } = require('./functions');
 const classes = require('./test/test-inheritence-classes.json');
 
-const appendMethod = (cls, m) => cls.replace('End Class', `\n\n\t${m}\nEnd Class`)
+const appendMethod = (cls, m) => cls.replace('End Class', `\n${m}\nEnd Class`)
 
 const addSuperPublicMethods = ( structure, arrMethods, type, superClsName ) => {
     if (!arrMethods) return structure;
     Object.values(arrMethods).forEach((method) => {
-        let {name, sign, isPublic, end} = method
-        let superCall = sign.substring(sign.indexOf(name))
+        let {name, sign, isPublic, end, absName} = method
+        let superCall = (absName) ? absName : name;
         if (isPublic) {
             let _sign = `Public ${type} ${sign.substring(sign.indexOf(name))}`;
-            let method = `${_sign} : ${name} = m_${superClsName}.${superCall} : ${end}`;
+            let callSuper = `${name} = m_${superClsName}.${superCall}`
+            if (type.includes(' Let ')) {
+                callSuper = `m_${superClsName}.${name} = ${callSuper.replace(name, '')}`
+            } else if (type.includes(' Set ')) {
+                callSuper = `set m_${superClsName}.${name} = ${callSuper.replace(name, '')}`
+            } else if (type === 'Sub') {
+                callSuper = `call m_${superClsName}.${superCall}`
+            }
+            let method = `    ${sign}\n        ${callSuper}\n    ${end}`;
             structure = appendMethod(structure, method)
         }
     })
@@ -19,7 +28,7 @@ const addSuperPublicMethods = ( structure, arrMethods, type, superClsName ) => {
 
 let classNames = []
 let extendables = {}
-fs.writeFileSync(`test/test-inheritence-out.vbs`, '\'   Class extraction started.')
+fs.writeFileSync(`test/test-inheritence-out.vbs`, '\'   Class extraction started.\n\n')
 
 classes.forEach(cls => {
     let { name, isExtendable } = cls;
@@ -33,7 +42,8 @@ classes.forEach(cls => {
 });
 
 classes.forEach(cls => {
-    let {name, isExtends, extendsClass, subs, functions, propertys, noMethods } = cls;
+    let {name, body, isExtends, extendsClass, subs, functions, propertys, noMethods } = cls;
+    let newClassBody;
     if (isExtends) {
         if (!classNames.includes(extendsClass)) {
             throw new Error(`Class ${name} extends ${extendsClass} but ${extendsClass} is not declared.`)
@@ -52,11 +62,16 @@ classes.forEach(cls => {
                 }
         }
         let {sign, end, body} = constructor;
-        let method = `\n\nPrivate m_${extendsClass}\n\n`
-        method += `${sign}\n\t\tset m_${extendsClass} = new ${extendsClass}`;
+        let method = `\n\n    Private m_${extendsClass}\n\n`
+        method += `    ${sign}\n        set m_${extendsClass} = new ${extendsClass}`;
         if (body) method += `\n\t\t${body}`
-        method += `\n\t${end}\n\n`
+        method += `\n    ${end}\n\n`
         noMethods = appendMethod(noMethods, method)
+
+        let superClass = extendables[extendsClass];
+        noMethods = addSuperPublicMethods(noMethods, superClass.subs, "Sub", extendsClass)
+        noMethods = addSuperPublicMethods(noMethods, superClass.functions, "Function", extendsClass)
+        noMethods = addSuperPublicMethods(noMethods, superClass.propertys, "Property", extendsClass)
 
         if (propertys) Object.values(propertys).forEach(method => noMethods = appendMethod(noMethods, method.code))
         if (functions) Object.values(functions).forEach(method => noMethods = appendMethod(noMethods, method.code))
@@ -69,14 +84,13 @@ classes.forEach(cls => {
                 }
             })
         }
-
-        let superClass = extendables[extendsClass];
-        noMethods = addSuperPublicMethods(noMethods, superClass.subs, "Sub", extendsClass)
-        noMethods = addSuperPublicMethods(noMethods, superClass.functions, "Function", extendsClass)
-        noMethods = addSuperPublicMethods(noMethods, superClass.propertys, "Property", extendsClass)
-
-
-        noMethods = noMethods.replace(/[\s]*EXTENDS[\s*](.*)/i, '');
-        fs.appendFileSync(`test/test-inheritence-out.vbs`, noMethods)
+        newClassBody = noMethods;
+    } else {
+        newClassBody = deCompress(body);
     }
+    
+    newClassBody = newClassBody.replace(/[\s]*EXTENDABLE[\s]*/i, '');
+    newClassBody = newClassBody.replace(/[\s]*EXTENDS[\s]*(.*)/i, '');
+    newClassBody = removeEmptyLines(newClassBody)
+    fs.appendFileSync(`test/test-inheritence-out.vbs`, newClassBody)
 });
