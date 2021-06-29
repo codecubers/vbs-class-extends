@@ -1,0 +1,73 @@
+[
+  {
+    "name": "ClassA",
+    "body": "KIDwLgpgdgJghgIwDYQAQGElwM7Y13AQQFgAoVC1ABQFdkBLAY1QGU7q62EAKegGlQArAJRlK41AGtUAXlT1UAaiFiJFAOotGAJ3oAHMADpgjABYB7VACIA0vLy8lQ4QC5rqAGRTVFYLFZ0ZH4w+DjYpKRAA",
+    "isExtendable": true,
+    "subs": {
+      "PUBSUB": {
+        "name": "PubSub",
+        "sign": "Public Sub PubSub(i, j)",
+        "code": "AQ4BQVwIwGwSwMbAMrXNVUAUcA0wArASgFgAoUS4Aa2AF5g5gBqQ8q0AdWQQCc4ADgBcAdAFEEACwD2wAEQBpRgGdgOFoSIAuecABkNdqDEA7ACYpoQA",
+        "end": "End Sub",
+        "body": "\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    ",
+        "index": 1,
+        "isPublic": true
+      }
+    },
+    "structure": "Extendable Class ClassA\r\nPUBLIC_SUB_PUBSUB\r\nEnd Class\n\n",
+    "noMethods": "Extendable Class ClassA\n\nEnd Class\n\n"
+  },
+  {
+    "name": "ClassB",
+    "body": "KIDwLgpgdgJghgIwDYQAQGElwM7Y13AIVQnGhj0x2wEEBYAKFWdQAUBXZASwGNUAxdlB5guAeyhtOg4QAouAGlQArAJSMWm1AGtUAXlRdUAahUatzDghl8D2882CxUAZU6MnMfNQYMgA",
+    "isExtendable": true,
+    "isExtends": true,
+    "extendsClass": "ClassA",
+    "structure": "Extendable Class ClassB extends ClassA\r\n    Public Function PubFunc(i, j)\r\n        k = i + j\r\n        PubFunc = k\r\n    End Sub\r\nEnd Class\n\n",
+    "noMethods": "Extendable Class ClassB extends ClassA\r\n    Public Function PubFunc(i, j)\r\n        k = i + j\r\n        PubFunc = k\r\n    End Sub\r\nEnd Class\n\n"
+  },
+  {
+    "name": "ClassCA",
+    "body": "MIGwhgzhAEqRwCC0CmAPALigdgExnFIgLABQ0F0ACgE4CWAbmFtHXumZdfUywMoBXAEaxwUAPoBJbHQx0wIOgC8UnLpTa500ALzQAjGooBRAHK5ogoWWN5R8UqSA",
+    "isExtends": true,
+    "extendsClass": "ClassA",
+    "subs": {
+      "CLASS_INITIALIZE": {
+        "name": "Class_Initialize",
+        "sign": "Private Sub Class_Initialize",
+        "code": "AQ4BQJwSwNwQwC4FNgGUCuAjYBhANnAM6ED6AkgHZQJRx5QBeSAsAFCgfBQUAmSAHsAC8wAIxsOAUQByPNFiA===",
+        "end": "ENd Sub",
+        "body": "\r\n        index = 1\r\n    ",
+        "index": 1,
+        "isPublic": false
+      }
+    },
+    "structure": "Class ClassCA extends ClassA\r\n    Private index\r\nPRIVATE_SUB_CLASS_INITIALIZE\r\nEnd Class\n\n",
+    "noMethods": "Class ClassCA extends ClassA\r\n    Private index\n\nEnd Class\n\n"
+  },
+  {
+    "name": "ClassCB",
+    "body": "MIGwhgzhAEqRwBC0CmAPALigdgExnFIgLABQ0F0ACgE4CWAbmFtHXumZdfUywMoBXAEaxwUAPoBJbHQx0wIOgC8UnLpTa500ALzQATGooBRAHK5ogoWWN5R8UqSA",
+    "isExtends": true,
+    "extendsClass": "ClassB",
+    "subs": {
+      "CLASS_INITIALIZE": {
+        "name": "Class_Initialize",
+        "sign": "Private Sub Class_Initialize",
+        "code": "AQ4BQJwSwNwQwC4FNgGUCuAjYBhANnAM6ED6AkgHZQJRx5QBeSAsAFCgfBQUAmSAHsAC8wAExsOAUQByPNFiA===",
+        "end": "ENd Sub",
+        "body": "\r\n        index = 2\r\n    ",
+        "index": 1,
+        "isPublic": false
+      }
+    },
+    "structure": "Class ClassCB extends ClassB\r\n    Private index\r\nPRIVATE_SUB_CLASS_INITIALIZE\r\nEnd Class\n\n",
+    "noMethods": "Class ClassCB extends ClassB\r\n    Private index\n\nEnd Class\n\n"
+  },
+  {
+    "name": "ClassD",
+    "body": "MIGwhgzhAEqRARAsAKAKIDsAmtxRSkA=",
+    "structure": "Class ClassD\r\nEnd Class\n\n",
+    "noMethods": "Class ClassD\r\nEnd Class\n\n"
+  }
+]
