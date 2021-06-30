@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "lz-string": "^1.4.4",
+    "vbspm": "^1.2.6",
     "yallist": "^4.0.0"
   }
 }

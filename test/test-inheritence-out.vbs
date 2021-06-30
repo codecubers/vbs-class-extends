@@ -1,6 +1,8 @@
+' Build: test-inheritence.vbs
+
 	Class ClassA
 
-    Private m_PubProp;
+    Private m_PubProp
 
     Public Property Get PubProp()
         PubProp = m_PubProp
@@ -30,11 +32,6 @@ End Class
 
     Private m_PubProp
 
-    Public Function PubFunc(i, j)
-        k = i + j
-        PubFunc = k
-    End Sub
-
     Private m_ClassA
 
     Private Sub Class_Initialize
@@ -42,7 +39,7 @@ End Class
     End Sub
 
     Public Default Sub PubSub(i, j)
-        call m_ClassA.PubSub
+        call m_ClassA.PubSub(i, j)
     End Sub
 
     Public Function PubFunc
@@ -50,20 +47,25 @@ End Class
     End Function
 
     Public Property Get PubProp()
-        PubProp.Get = m_ClassA.PubProp
+        PubProp.Get = m_ClassA.PubProp()
     End Property
 
     Public Property Set PubProp(Value)
-        PubProp.Set = m_ClassA.PubProp
+        PubProp.Set = m_ClassA.PubProp(Value)
     End Property
 
     Public Property Let PubPropLet(Value)
-        PubPropLet.Let = m_ClassA.PubPropLet
+        PubPropLet.Let = m_ClassA.PubPropLet(Value)
     End Property
 
     Public Default Property Get PubProp
         PubProp = m_PubProp
     End Property
+
+    Public Function PubFunc(i, j)
+        k = i + j
+        PubFunc = k
+    End Function
 End Class
 
 
@@ -81,7 +83,7 @@ End Class
     ENd Sub
 
     Public Default Sub PubSub(i, j)
-        call m_ClassA.PubSub
+        call m_ClassA.PubSub(i, j)
     End Sub
 
     Public Function PubFunc
@@ -89,15 +91,15 @@ End Class
     End Function
 
     Public Property Get PubProp()
-        PubProp.Get = m_ClassA.PubProp
+        PubProp.Get = m_ClassA.PubProp()
     End Property
 
     Public Property Set PubProp(Value)
-        PubProp.Set = m_ClassA.PubProp
+        PubProp.Set = m_ClassA.PubProp(Value)
     End Property
 
     Public Property Let PubPropLet(Value)
-        PubPropLet.Let = m_ClassA.PubPropLet
+        PubPropLet.Let = m_ClassA.PubPropLet(Value)
     End Property
 
 End Class
@@ -115,6 +117,10 @@ End Class
         index = 2
 
     ENd Sub
+
+    Public Function PubFunc(i, j)
+        PubFunc = m_ClassB.PubFunc(i, j)
+    End Function
 
     Public Default Property Get PubProp
         PubProp.Get = m_ClassB.PubProp

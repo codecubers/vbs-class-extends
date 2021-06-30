@@ -17,23 +17,62 @@ const appendMethod = (cls, m) => cls.replace('End Class', `\n${m}\nEnd Class`)
 const addSuperPublicMethods = ( structure, arrMethods, type, superClsName ) => {
     if (!arrMethods) return structure;
     Object.values(arrMethods).forEach((method) => {
-        let {name, sign, isPublic, end, absName} = method
+        let {name, sign, isPublic, end, absName, params} = method
         let superCall = (absName) ? absName : name;
         if (isPublic) {
             let _sign = `Public ${type} ${sign.substring(sign.indexOf(name))}`;
             let callSuper = `${name} = m_${superClsName}.${superCall}`
+            if (params) callSuper += params
             if (type.includes(' Let ')) {
                 callSuper = `m_${superClsName}.${name} = ${callSuper.replace(name, '')}`
             } else if (type.includes(' Set ')) {
                 callSuper = `set m_${superClsName}.${name} = ${callSuper.replace(name, '')}`
             } else if (type === 'Sub') {
                 callSuper = `call m_${superClsName}.${superCall}`
+                if (params) callSuper += params
             }
             let method = `    ${sign}\n        ${callSuper}\n    ${end}`;
             structure = appendMethod(structure, method)
         }
     })
     return structure;
+}
+
+function extendClass(child, parent) {
+  let {name, extendsClass, subs, functions, propertys, noMethods } = child;
+
+  let constructor;
+  if (subs && subs.CLASS_INITIALIZE) constructor = subs.CLASS_INITIALIZE;
+  if (!constructor) {
+      constructor = {
+              sign: "Private Sub Class_Initialize",
+              end: "End Sub",
+              body: ""
+          }
+  }
+  let {sign, end, body} = constructor;
+  let method = `\n\n    Private m_${extendsClass}\n\n`
+  method += `    ${sign}\n        set m_${extendsClass} = new ${extendsClass}`;
+  if (body) method += `\n\t\t${body}`
+  method += `\n    ${end}\n\n`
+  noMethods = appendMethod(noMethods, method)
+
+  noMethods = addSuperPublicMethods(noMethods, parent.subs, "Sub", extendsClass)
+  noMethods = addSuperPublicMethods(noMethods, parent.functions, "Function", extendsClass)
+  noMethods = addSuperPublicMethods(noMethods, parent.propertys, "Property", extendsClass)
+
+  if (propertys) Object.values(propertys).forEach(method => noMethods = appendMethod(noMethods, method.code))
+  if (functions) Object.values(functions).forEach(method => noMethods = appendMethod(noMethods, method.code))
+  if (subs) {       
+      Object.entries(subs).forEach(([subNameUpper, sub]) => {
+          if (subNameUpper === 'CLASS_INITIALIZE') {
+              noMethods = appendMethod(noMethods, '')
+          } else {
+              noMethods = appendMethod(noMethods, sub.code)
+          }
+      })
+  }
+  return noMethods;
 }
 
 /**
@@ -91,5 +130,6 @@ module.exports = {
     typeCheck,
     appendMethod,
     addSuperPublicMethods,
+    extendClass,
     flatToTree
 }

@@ -1,10 +1,10 @@
 'use strict';
 const fso = require('fs');
 const EXT = require('./extracts');
-global.master = fso.readFileSync('test/export-bundle.vbs').toString();
+global.master = fso.readFileSync('test/test-inheritence.vbs').toString();
 let newClasses = EXT.extractVBSFileMethods();
-fso.writeFileSync('./test/export-bundle-remaining.vbs', global.master)
-fso.writeFileSync('./test/export-bundle-classes.json', JSON.stringify(newClasses, null, 2));
+fso.writeFileSync('./test/test-inheritence-remaining.vbs', global.master)
+fso.writeFileSync('./test/test-inheritence-classes.json', JSON.stringify(newClasses, null, 2));
 
 // TODO(s):
 // Function return types can be objects (Set x = y); Need to capture this information in class.json object and will be added when writing extends class.

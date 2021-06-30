@@ -27,7 +27,6 @@ function classExtends(code) {
     var match = re.exec(code);
     // console.log('match', match)
     return match ? { base: match[1], _extends: match[2] } : null
-
 }
 
 function isClassExtendable(code) {
@@ -35,12 +34,6 @@ function isClassExtendable(code) {
     var re = /EXTENDABLE[\s]+CLASS[\s]+(\w+)[\s]+(?:.*)END Class/igsm
     var match = re.exec(code);
     return match ? true: false
-}
-
-function propertyType(propSign) {
-    var re = /[ ](GET|SET|LET)[ ]/igsm
-    var match = re.exec(propSign);
-    return match ? match[1] : null;
 }
 
 function extract_className(code) {
@@ -80,7 +73,7 @@ function extract_procedureSignature(index, code, type) {
         name: `${type}_${index}`
     }
     // if (type === 'PROPERTY') 
-    console.log('\n\n' + match);
+    // console.log('\n\n' + match);
     if (match) {
         out.sign = match[1];
         out.absName = match[4]
@@ -89,13 +82,14 @@ function extract_procedureSignature(index, code, type) {
         } else {
             out.name = match[4];
         }
+        out.params = match[5]
         out.end = match[7]
     } else {
         console.log("ERROR while exracting signature")
         console.log("re: ", re)
         console.log("code:", code)
     }
-    console.log('out object to be returned:', out)
+    // console.log('out object to be returned:', out)
     return out;
 }
 //TODO: Combine these two sections
@@ -105,14 +99,14 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _public = extract_methods(type, cls, true);
     if (_public) {
         _public.forEach((sub) => {
-            let {name, sign, end, absName} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end, absName, params} = extract_procedureSignature(index, sub, type);
             if (type === 'PROPERTY') {
-                console.log('Property sign: ', sign)
-                console.log('Property name: ', name)
+                // console.log('Property sign: ', sign)
+                // console.log('Property name: ', name)
             }
             let _upper = name.toUpperCase();
             _methods[_upper] = {
-                name, sign, end, absName,
+                name, sign, end, absName, params,
                 code: FUNC.compress(sub),
                 body: extractBody(sub, sign, end),
                 index: index,
@@ -126,11 +120,11 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _private = extract_methods(type, cls, false);
     if (_private) {
         _private.forEach((sub) => {
-            let {name, sign, end, absName} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end, absName, params} = extract_procedureSignature(index, sub, type);
             let _upper = name.toUpperCase();
             if (!_methods.hasOwnProperty(_upper)) {
                 _methods[_upper] = {
-                    name, sign, end, absName,
+                    name, sign, end, absName, params,
                     code: FUNC.compress(sub),
                     body: extractBody(sub, sign, end),
                     index: index,
