@@ -16,3 +16,4 @@ fso.writeFileSync('./test/export-bundle-classes.json', JSON.stringify(newClasses
 // Move extract sub/function/proprety code into a module
 // Resolve each class super methods in-memory before writing. Also, circlar reference error need to be assessed before writing to output.
 // Ability to delete in-line comments even if they include complex double-quotes
+// Overridden methods should not be copied.

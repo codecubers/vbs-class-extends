@@ -1,6 +1,6 @@
 Extendable Class ClassA
 
-    Private m_PubProp;
+    Private m_PubProp
 
     Public Property Get PubProp()
         PubProp = m_PubProp
@@ -35,7 +35,7 @@ Extendable Class ClassB extends ClassA
     Public Function PubFunc(i, j)
         k = i + j
         PubFunc = k
-    End Sub
+    End Function
 End Class
 
 Class ClassCA extends ClassA

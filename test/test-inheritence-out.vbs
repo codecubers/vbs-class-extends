@@ -1,6 +1,4 @@
-'   Class extraction started.
-
-Class ClassA
+	Class ClassA
 
     Private m_PubProp;
 
@@ -26,7 +24,9 @@ Class ClassA
     End Function
 End Class
 
-Class ClassB
+
+
+	Class ClassB
 
     Private m_PubProp
 
@@ -66,7 +66,9 @@ Class ClassB
     End Property
 End Class
 
-Class ClassCA
+
+
+	Class ClassCA
     Private index
 
     Private m_ClassA
@@ -100,7 +102,9 @@ Class ClassCA
 
 End Class
 
-Class ClassCB
+
+
+	Class ClassCB
     Private index
 
     Private m_ClassB
@@ -118,6 +122,12 @@ Class ClassCB
 
 End Class
 
-Class ClassD
+
+
+	Class ClassD
 End Class
 
+
+
+Public Sub OuterSUb
+End SUb
