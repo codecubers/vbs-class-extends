@@ -11,6 +11,7 @@
     "registry": "https://nodevbs-wvq5k.ondigitalocean.app/"
   },
   "dependencies": {
-    "lz-string": "^1.4.4"
+    "lz-string": "^1.4.4",
+    "yallist": "^4.0.0"
   }
 }
