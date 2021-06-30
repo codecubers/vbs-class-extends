@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { removeEmptyLines, deCompress } = require('./functions');
-const classes = require('./test/test-inheritence-classes.json');
+const classes = require('./test/export-bundle-classes.json');
 
 const appendMethod = (cls, m) => cls.replace('End Class', `\n${m}\nEnd Class`)
 
@@ -28,7 +28,7 @@ const addSuperPublicMethods = ( structure, arrMethods, type, superClsName ) => {
 
 let classNames = []
 let extendables = {}
-fs.writeFileSync(`test/test-inheritence-out.vbs`, '\'   Class extraction started.\n\n')
+// fs.writeFileSync(`test/export-bundle-out.vbs`, '\' Build: export-bundle.vbs\n')
 
 classes.forEach(cls => {
     let { name, isExtendable } = cls;
@@ -40,6 +40,8 @@ classes.forEach(cls => {
         extendables[name] = cls;
     }
 });
+
+let outStructure = fs.readFileSync('test/export-bundle-remaining.vbs').toString();
 
 classes.forEach(cls => {
     let {name, body, isExtends, extendsClass, subs, functions, propertys, noMethods } = cls;
@@ -92,5 +94,7 @@ classes.forEach(cls => {
     newClassBody = newClassBody.replace(/[\s]*EXTENDABLE[\s]*/i, '');
     newClassBody = newClassBody.replace(/[\s]*EXTENDS[\s]*(.*)/i, '');
     newClassBody = removeEmptyLines(newClassBody)
-    fs.appendFileSync(`test/test-inheritence-out.vbs`, newClassBody)
+    outStructure = outStructure.replace(`CLASS_${name}`, newClassBody);
 });
+
+fs.writeFileSync(`test/export-bundle-out.vbs`, outStructure)

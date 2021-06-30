@@ -1,0 +1,802 @@
+[
+  {
+    "name": "Console",
+    "body": "\n\nClass Console\n\n\tPublic Function fmt( str, args )\r\n\t\tDim res\n\t\tres = \"\"\n\n\t\tDim pos\n\t\tpos = 0\n\n\t\tDim i\r\n\t\tFor i = 1 To Len(str)\n\n\t\t\tIf Mid(str,i,1)=\"%\" Then\r\n\t\t\t\tIf i<Len(str) Then\n\n\t\t\t\t\tIf Mid(str,i+1,1)=\"%\" Then\r\n\t\t\t\t\t\tres = res & \"%\"\r\n\t\t\t\t\t\ti = i + 1\n\n\t\t\t\t\tElseIf Mid(str,i+1,1)=\"x\" Then\r\n\t\t\t\t\t\tres = res & CStr(args(pos))\r\n\t\t\t\t\t\tpos = pos+1\r\n\t\t\t\t\t\ti = i + 1\r\n\t\t\t\t\tEnd If\r\n\t\t\t\tEnd If\n\n\t\t\tElse\r\n\t\t\t\tres = res & Mid(str,i,1)\r\n\t\t\tEnd If\r\n\t\tNext\n\n\t\tfmt = res\r\n\tEnd Function\n\nEnd Class\n\n",
+    "functions": {
+      "FMT": {
+        "name": "fmt",
+        "sign": "Public Function fmt( str, args )",
+        "end": "End Function",
+        "absName": "fmt",
+        "code": "\tPublic Function fmt( str, args )\r\n\t\tDim res\n\t\tres = \"\"\n\n\t\tDim pos\n\t\tpos = 0\n\n\t\tDim i\r\n\t\tFor i = 1 To Len(str)\n\n\t\t\tIf Mid(str,i,1)=\"%\" Then\r\n\t\t\t\tIf i<Len(str) Then\n\n\t\t\t\t\tIf Mid(str,i+1,1)=\"%\" Then\r\n\t\t\t\t\t\tres = res & \"%\"\r\n\t\t\t\t\t\ti = i + 1\n\n\t\t\t\t\tElseIf Mid(str,i+1,1)=\"x\" Then\r\n\t\t\t\t\t\tres = res & CStr(args(pos))\r\n\t\t\t\t\t\tpos = pos+1\r\n\t\t\t\t\t\ti = i + 1\r\n\t\t\t\t\tEnd If\r\n\t\t\t\tEnd If\n\n\t\t\tElse\r\n\t\t\t\tres = res & Mid(str,i,1)\r\n\t\t\tEnd If\r\n\t\tNext\n\n\t\tfmt = res\r\n\tEnd Function",
+        "body": "\r\n\t\tDim res\n\t\tres = \"\"\n\n\t\tDim pos\n\t\tpos = 0\n\n\t\tDim i\r\n\t\tFor i = 1 To Len(str)\n\n\t\t\tIf Mid(str,i,1)=\"%\" Then\r\n\t\t\t\tIf i<Len(str) Then\n\n\t\t\t\t\tIf Mid(str,i+1,1)=\"%\" Then\r\n\t\t\t\t\t\tres = res & \"%\"\r\n\t\t\t\t\t\ti = i + 1\n\n\t\t\t\t\tElseIf Mid(str,i+1,1)=\"x\" Then\r\n\t\t\t\t\t\tres = res & CStr(args(pos))\r\n\t\t\t\t\t\tpos = pos+1\r\n\t\t\t\t\t\ti = i + 1\r\n\t\t\t\t\tEnd If\r\n\t\t\t\tEnd If\n\n\t\t\tElse\r\n\t\t\t\tres = res & Mid(str,i,1)\r\n\t\t\tEnd If\r\n\t\tNext\n\n\t\tfmt = res\r\n\t",
+        "index": 1,
+        "isPublic": true
+      }
+    },
+    "structure": "\n\nClass Console\n\nPUBLIC_FUNCTION_FMT\n\nEnd Class\n\n",
+    "noMethods": "\n\nClass Console\n\nEnd Class\n\n"
+  },
+  {
+    "name": "Collection",
+    "body": "\n\nClass Collection\n\n    Private dict\r\n    Private oThis\r\n    Private m_Name\n\n    Private Sub Class_Initialize()\r\n        set dict = CreateObject(\"Scripting.Dictionary\")\r\n        set oThis = Me\r\n        m_Name = \"Undefined\"\r\n    End Sub\n\n    Public Default Property Get Obj\r\n        set Obj = dict\r\n    End Property \r\n    Public Property Set Obj(d)\r\n        set dict = d\r\n    End Property\n\n    Public Property Get Name\r\n        Name = m_Name\r\n    End Property\r\n    Public Property Let Name(Value)\r\n        m_Name = Value\r\n    End Property\n\n    Public Sub Add(Key, Value)\r\n        dict.Add key, value\r\n    End Sub\n\n    Public Sub Remove(Key)\r\n        If KeyExists(Key) Then\r\n            dict.Remove(Key)\r\n        Else\r\n            RaiseErr \"Key [\" & Key & \"] does not exists in collection.\"\r\n        End If\r\n    End Sub\n\n    Public Sub RemoveAll()\r\n        dict.RemoveAll()\r\n    End Sub\n\n    Public Property Get Count\r\n        Count = dict.Count\r\n    End Property\n\n    Public Function GetItem(Key)\r\n        If KeyExists(Key) Then\r\n            GetItem = dict.Item(Key)\r\n        Else\n\n            RaiseErr \"Key [\" & Key & \"] does not exists in collection.\"\r\n        End If\r\n    End Function\n\n    Public Function GetItemAtIndex(Index)\n\n        GetItemAtIndex = dict.Item(Index)\r\n    End Function\n\n    Public Function IndexOf(Key)\r\n        IndexOf = dict.IndexOf(Key, 0)\r\n    End Function\n\n    Public Function KeyExists(Key)\r\n        KeyExists = dict.Exists(Key)\r\n    End Function\n\n    Public Function toCSV\r\n        toCSV = join(toArray(), \", \")\r\n    End Function\n\n    Public Function toArray\r\n        toArray = dict.Items\r\n    End Function\n\n    Public Function isEmpty\r\n        isEmpty = (dict.Count = 0)        \r\n    End Function\n\n    Private Sub RaiseErr(desc)\r\n        Err.Clear\r\n        Err.Raise 1000, \"Collection Class Error\", desc\r\n    End Sub\n\n    Private Sub Class_Terminate()\r\n        set dict = Nothing\r\n        set oThis = Nothing\r\n    End Sub\n\nEnd Class\n\n",
+    "propertys": {
+      "OBJ.GET": {
+        "name": "Obj.Get",
+        "sign": "Public Default Property Get Obj",
+        "end": "End Property",
+        "absName": "Obj",
+        "code": "    Public Default Property Get Obj\r\n        set Obj = dict\r\n    End Property ",
+        "body": "\r\n        set Obj = dict\r\n    ",
+        "index": 1,
+        "isPublic": true
+      },
+      "OBJ.SET": {
+        "name": "Obj.Set",
+        "sign": "Public Property Set Obj(d)",
+        "end": "End Property",
+        "absName": "Obj",
+        "code": "    Public Property Set Obj(d)\r\n        set dict = d\r\n    End Property",
+        "body": "\r\n        set dict = d\r\n    ",
+        "index": 2,
+        "isPublic": true
+      },
+      "NAME.GET": {
+        "name": "Name.Get",
+        "sign": "Public Property Get Name",
+        "end": "End Property",
+        "absName": "Name",
+        "code": "    Public Property Get Name\r\n        Name = m_Name\r\n    End Property",
+        "body": "\r\n        Name = m_Name\r\n    ",
+        "index": 3,
+        "isPublic": true
+      },
+      "NAME.LET": {
+        "name": "Name.Let",
+        "sign": "Public Property Let Name(Value)",
+        "end": "End Property",
+        "absName": "Name",
+        "code": "    Public Property Let Name(Value)\r\n        m_Name = Value\r\n    End Property",
+        "body": "\r\n        m_Name = Value\r\n    ",
+        "index": 4,
+        "isPublic": true
+      },
+      "COUNT.GET": {
+        "name": "Count.Get",
+        "sign": "Public Property Get Count",
+        "end": "End Property",
+        "absName": "Count",
+        "code": "    Public Property Get Count\r\n        Count = dict.Count\r\n    End Property",
+        "body": "\r\n        Count = dict.Count\r\n    ",
+        "index": 5,
+        "isPublic": true
+      }
+    },
+    "subs": {
+      "ADD": {
+        "name": "Add",
+        "sign": "Public Sub Add(Key, Value)",
+        "end": "End Sub",
+        "absName": "Add",
+        "code": "    Public Sub Add(Key, Value)\r\n        dict.Add key, value\r\n    End Sub",
+        "body": "\r\n        dict.Add key, value\r\n    ",
+        "index": 1,
+        "isPublic": true
+      },
+      "REMOVE": {
+        "name": "Remove",
+        "sign": "Public Sub Remove(Key)",
+        "end": "End Sub",
+        "absName": "Remove",
+        "code": "    Public Sub Remove(Key)\r\n        If KeyExists(Key) Then\r\n            dict.Remove(Key)\r\n        Else\r\n            RaiseErr \"Key [\" & Key & \"] does not exists in collection.\"\r\n        End If\r\n    End Sub",
+        "body": "\r\n        If KeyExists(Key) Then\r\n            dict.Remove(Key)\r\n        Else\r\n            RaiseErr \"Key [\" & Key & \"] does not exists in collection.\"\r\n        End If\r\n    ",
+        "index": 2,
+        "isPublic": true
+      },
+      "REMOVEALL": {
+        "name": "RemoveAll",
+        "sign": "Public Sub RemoveAll()",
+        "end": "End Sub",
+        "absName": "RemoveAll",
+        "code": "    Public Sub RemoveAll()\r\n        dict.RemoveAll()\r\n    End Sub",
+        "body": "\r\n        dict.RemoveAll()\r\n    ",
+        "index": 3,
+        "isPublic": true
+      },
+      "CLASS_INITIALIZE": {
+        "name": "Class_Initialize",
+        "sign": "Private Sub Class_Initialize()",
+        "end": "End Sub",
+        "absName": "Class_Initialize",
+        "code": "    Private Sub Class_Initialize()\r\n        set dict = CreateObject(\"Scripting.Dictionary\")\r\n        set oThis = Me\r\n        m_Name = \"Undefined\"\r\n    End Sub",
+        "body": "\r\n        set dict = CreateObject(\"Scripting.Dictionary\")\r\n        set oThis = Me\r\n        m_Name = \"Undefined\"\r\n    ",
+        "index": 4,
+        "isPublic": false
+      },
+      "RAISEERR": {
+        "name": "RaiseErr",
+        "sign": "Private Sub RaiseErr(desc)",
+        "end": "End Sub",
+        "absName": "RaiseErr",
+        "code": "    Private Sub RaiseErr(desc)\r\n        Err.Clear\r\n        Err.Raise 1000, \"Collection Class Error\", desc\r\n    End Sub",
+        "body": "\r\n        Err.Clear\r\n        Err.Raise 1000, \"Collection Class Error\", desc\r\n    ",
+        "index": 5,
+        "isPublic": false
+      },
+      "CLASS_TERMINATE": {
+        "name": "Class_Terminate",
+        "sign": "Private Sub Class_Terminate()",
+        "end": "End Sub",
+        "absName": "Class_Terminate",
+        "code": "    Private Sub Class_Terminate()\r\n        set dict = Nothing\r\n        set oThis = Nothing\r\n    End Sub",
+        "body": "\r\n        set dict = Nothing\r\n        set oThis = Nothing\r\n    ",
+        "index": 6,
+        "isPublic": false
+      }
+    },
+    "functions": {
+      "GETITEM": {
+        "name": "GetItem",
+        "sign": "Public Function GetItem(Key)",
+        "end": "End Function",
+        "absName": "GetItem",
+        "code": "    Public Function GetItem(Key)\r\n        If KeyExists(Key) Then\r\n            GetItem = dict.Item(Key)\r\n        Else\n\n            RaiseErr \"Key [\" & Key & \"] does not exists in collection.\"\r\n        End If\r\n    End Function",
+        "body": "\r\n        If KeyExists(Key) Then\r\n            GetItem = dict.Item(Key)\r\n        Else\n\n            RaiseErr \"Key [\" & Key & \"] does not exists in collection.\"\r\n        End If\r\n    ",
+        "index": 1,
+        "isPublic": true
+      },
+      "GETITEMATINDEX": {
+        "name": "GetItemAtIndex",
+        "sign": "Public Function GetItemAtIndex(Index)",
+        "end": "End Function",
+        "absName": "GetItemAtIndex",
+        "code": "    Public Function GetItemAtIndex(Index)\n\n        GetItemAtIndex = dict.Item(Index)\r\n    End Function",
+        "body": "\n\n        GetItemAtIndex = dict.Item(Index)\r\n    ",
+        "index": 2,
+        "isPublic": true
+      },
+      "INDEXOF": {
+        "name": "IndexOf",
+        "sign": "Public Function IndexOf(Key)",
+        "end": "End Function",
+        "absName": "IndexOf",
+        "code": "    Public Function IndexOf(Key)\r\n        IndexOf = dict.IndexOf(Key, 0)\r\n    End Function",
+        "body": "\r\n        IndexOf = dict.IndexOf(Key, 0)\r\n    ",
+        "index": 3,
+        "isPublic": true
+      },
+      "KEYEXISTS": {
+        "name": "KeyExists",
+        "sign": "Public Function KeyExists(Key)",
+        "end": "End Function",
+        "absName": "KeyExists",
+        "code": "    Public Function KeyExists(Key)\r\n        KeyExists = dict.Exists(Key)\r\n    End Function",
+        "body": "\r\n        KeyExists = dict.Exists(Key)\r\n    ",
+        "index": 4,
+        "isPublic": true
+      },
+      "TOCSV": {
+        "name": "toCSV",
+        "sign": "Public Function toCSV",
+        "end": "End Function",
+        "absName": "toCSV",
+        "code": "    Public Function toCSV\r\n        toCSV = join(toArray(), \", \")\r\n    End Function",
+        "body": "\r\n        toCSV = join(toArray(), \", \")\r\n    ",
+        "index": 5,
+        "isPublic": true
+      },
+      "TOARRAY": {
+        "name": "toArray",
+        "sign": "Public Function toArray",
+        "end": "End Function",
+        "absName": "toArray",
+        "code": "    Public Function toArray\r\n        toArray = dict.Items\r\n    End Function",
+        "body": "\r\n        toArray = dict.Items\r\n    ",
+        "index": 6,
+        "isPublic": true
+      },
+      "ISEMPTY": {
+        "name": "isEmpty",
+        "sign": "Public Function isEmpty",
+        "end": "End Function",
+        "absName": "isEmpty",
+        "code": "    Public Function isEmpty\r\n        isEmpty = (dict.Count = 0)        \r\n    End Function",
+        "body": "\r\n        isEmpty = (dict.Count = 0)        \r\n    ",
+        "index": 7,
+        "isPublic": true
+      }
+    },
+    "structure": "\n\nClass Collection\n\n    Private dict\r\n    Private oThis\r\n    Private m_Name\n\nPRIVATE_SUB_CLASS_INITIALIZE\n\nPUBLIC_PROPERTY_OBJ.GET\r\nPUBLIC_PROPERTY_OBJ.SET\n\nPUBLIC_PROPERTY_NAME.GET\r\nPUBLIC_PROPERTY_NAME.LET\n\nPUBLIC_SUB_ADD\n\nPUBLIC_SUB_REMOVE\n\nPUBLIC_SUB_REMOVEALL\n\nPUBLIC_PROPERTY_COUNT.GET\n\nPUBLIC_FUNCTION_GETITEM\n\nPUBLIC_FUNCTION_GETITEMATINDEX\n\nPUBLIC_FUNCTION_INDEXOF\n\nPUBLIC_FUNCTION_KEYEXISTS\n\nPUBLIC_FUNCTION_TOCSV\n\nPUBLIC_FUNCTION_TOARRAY\n\nPUBLIC_FUNCTION_ISEMPTY\n\nPRIVATE_SUB_RAISEERR\n\nPRIVATE_SUB_CLASS_TERMINATE\n\nEnd Class\n\n",
+    "noMethods": "\n\nClass Collection\n\n    Private dict\r\n    Private oThis\r\n    Private m_Name\n\nEnd Class\n\n"
+  },
+  {
+    "name": "DictUtil",
+    "body": "Class DictUtil\n\n    Function SortDictionary(objDict, intSort)\n\n        Const dictKey  = 1\r\n        Const dictItem = 2\n\n        Dim strDict()\r\n        Dim objKey\r\n        Dim strKey,strItem\r\n        Dim X,Y,Z\n\n        Z = objDict.Count\n\n        If Z > 1 Then\n\n            ReDim strDict(Z,2)\r\n            X = 0\n\n            For Each objKey In objDict\r\n                strDict(X,dictKey)  = CStr(objKey)\r\n                strDict(X,dictItem) = CStr(objDict(objKey))\r\n                X = X + 1\r\n            Next\n\n            For X = 0 To (Z - 2)\r\n            For Y = X To (Z - 1)\r\n                If StrComp(strDict(X,intSort),strDict(Y,intSort),vbTextCompare) > 0 Then\r\n                    strKey  = strDict(X,dictKey)\r\n                    strItem = strDict(X,dictItem)\r\n                    strDict(X,dictKey)  = strDict(Y,dictKey)\r\n                    strDict(X,dictItem) = strDict(Y,dictItem)\r\n                    strDict(Y,dictKey)  = strKey\r\n                    strDict(Y,dictItem) = strItem\r\n                End If\r\n            Next\r\n            Next\n\n            objDict.RemoveAll\n\n            For X = 0 To (Z - 1)\r\n            objDict.Add strDict(X,dictKey), strDict(X,dictItem)\r\n            Next\n\n        End If\r\n    End Function\r\nEnd Class\n\n",
+    "functions": {
+      "SORTDICTIONARY": {
+        "name": "SortDictionary",
+        "sign": "Function SortDictionary(objDict, intSort)",
+        "end": "End Function",
+        "absName": "SortDictionary",
+        "code": "    Function SortDictionary(objDict, intSort)\n\n        Const dictKey  = 1\r\n        Const dictItem = 2\n\n        Dim strDict()\r\n        Dim objKey\r\n        Dim strKey,strItem\r\n        Dim X,Y,Z\n\n        Z = objDict.Count\n\n        If Z > 1 Then\n\n            ReDim strDict(Z,2)\r\n            X = 0\n\n            For Each objKey In objDict\r\n                strDict(X,dictKey)  = CStr(objKey)\r\n                strDict(X,dictItem) = CStr(objDict(objKey))\r\n                X = X + 1\r\n            Next\n\n            For X = 0 To (Z - 2)\r\n            For Y = X To (Z - 1)\r\n                If StrComp(strDict(X,intSort),strDict(Y,intSort),vbTextCompare) > 0 Then\r\n                    strKey  = strDict(X,dictKey)\r\n                    strItem = strDict(X,dictItem)\r\n                    strDict(X,dictKey)  = strDict(Y,dictKey)\r\n                    strDict(X,dictItem) = strDict(Y,dictItem)\r\n                    strDict(Y,dictKey)  = strKey\r\n                    strDict(Y,dictItem) = strItem\r\n                End If\r\n            Next\r\n            Next\n\n            objDict.RemoveAll\n\n            For X = 0 To (Z - 1)\r\n            objDict.Add strDict(X,dictKey), strDict(X,dictItem)\r\n            Next\n\n        End If\r\n    End Function",
+        "body": "\n\n        Const dictKey  = 1\r\n        Const dictItem = 2\n\n        Dim strDict()\r\n        Dim objKey\r\n        Dim strKey,strItem\r\n        Dim X,Y,Z\n\n        Z = objDict.Count\n\n        If Z > 1 Then\n\n            ReDim strDict(Z,2)\r\n            X = 0\n\n            For Each objKey In objDict\r\n                strDict(X,dictKey)  = CStr(objKey)\r\n                strDict(X,dictItem) = CStr(objDict(objKey))\r\n                X = X + 1\r\n            Next\n\n            For X = 0 To (Z - 2)\r\n            For Y = X To (Z - 1)\r\n                If StrComp(strDict(X,intSort),strDict(Y,intSort),vbTextCompare) > 0 Then\r\n                    strKey  = strDict(X,dictKey)\r\n                    strItem = strDict(X,dictItem)\r\n                    strDict(X,dictKey)  = strDict(Y,dictKey)\r\n                    strDict(X,dictItem) = strDict(Y,dictItem)\r\n                    strDict(Y,dictKey)  = strKey\r\n                    strDict(Y,dictItem) = strItem\r\n                End If\r\n            Next\r\n            Next\n\n            objDict.RemoveAll\n\n            For X = 0 To (Z - 1)\r\n            objDict.Add strDict(X,dictKey), strDict(X,dictItem)\r\n            Next\n\n        End If\r\n    ",
+        "index": 1,
+        "isPublic": false
+      }
+    },
+    "structure": "Class DictUtil\n\nPRIVATE_FUNCTION_SORTDICTIONARY\r\nEnd Class\n\n",
+    "noMethods": "Class DictUtil\n\nEnd Class\n\n"
+  },
+  {
+    "name": "ArrayUtil",
+    "body": "Class ArrayUtil\n\n\tPublic Function toString(arr)\r\n\t\tIf Not isArray(arr) Then\r\n\t\t\ttoString = \"Supplied parameter is not an array.\"\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tDim s, i\r\n\t\ts = \"Array{\" & UBound(arr) & \"} [\" & vbCrLf\r\n\t\tFor i = 0  To UBound(arr)\r\n\t\t\ts = s & vbTab & \"[\" & i & \"] => [\" & arr(i) & \"]\"\r\n\t\t\tIf i < UBound(arr) Then s = s & \", \"\r\n\t\t\ts = s &  vbCrLf\r\n\t\tNext\r\n\t\ts = s & \"]\"\r\n\t\ttoString = s\n\n\tEnd Function\n\n\tPublic Function contains(arr, s) \r\n\t\tIf Not isArray(arr) Then\r\n\t\t\ttoString = \"Supplied parameter is not an array.\"\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tDim i, bFlag\r\n\t\tbFlag = False\r\n\t\tFor i = 0  To UBound(arr)\r\n\t\t\tIf arr(i) = s Then\r\n\t\t\t\tbFlag = True\r\n\t\t\t\tExit For\r\n\t\t\tEnd If\r\n\t\tNext\r\n\t\tcontains = bFlag\r\n\tEnd Function\n\nEnd Class\n\n",
+    "functions": {
+      "TOSTRING": {
+        "name": "toString",
+        "sign": "Public Function toString(arr)",
+        "end": "End Function",
+        "absName": "toString",
+        "code": "\tPublic Function toString(arr)\r\n\t\tIf Not isArray(arr) Then\r\n\t\t\ttoString = \"Supplied parameter is not an array.\"\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tDim s, i\r\n\t\ts = \"Array{\" & UBound(arr) & \"} [\" & vbCrLf\r\n\t\tFor i = 0  To UBound(arr)\r\n\t\t\ts = s & vbTab & \"[\" & i & \"] => [\" & arr(i) & \"]\"\r\n\t\t\tIf i < UBound(arr) Then s = s & \", \"\r\n\t\t\ts = s &  vbCrLf\r\n\t\tNext\r\n\t\ts = s & \"]\"\r\n\t\ttoString = s\n\n\tEnd Function",
+        "body": "\r\n\t\tIf Not isArray(arr) Then\r\n\t\t\ttoString = \"Supplied parameter is not an array.\"\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tDim s, i\r\n\t\ts = \"Array{\" & UBound(arr) & \"} [\" & vbCrLf\r\n\t\tFor i = 0  To UBound(arr)\r\n\t\t\ts = s & vbTab & \"[\" & i & \"] => [\" & arr(i) & \"]\"\r\n\t\t\tIf i < UBound(arr) Then s = s & \", \"\r\n\t\t\ts = s &  vbCrLf\r\n\t\tNext\r\n\t\ts = s & \"]\"\r\n\t\ttoString = s\n\n\t",
+        "index": 1,
+        "isPublic": true
+      },
+      "CONTAINS": {
+        "name": "contains",
+        "sign": "Public Function contains(arr, s)",
+        "end": "End Function",
+        "absName": "contains",
+        "code": "\tPublic Function contains(arr, s) \r\n\t\tIf Not isArray(arr) Then\r\n\t\t\ttoString = \"Supplied parameter is not an array.\"\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tDim i, bFlag\r\n\t\tbFlag = False\r\n\t\tFor i = 0  To UBound(arr)\r\n\t\t\tIf arr(i) = s Then\r\n\t\t\t\tbFlag = True\r\n\t\t\t\tExit For\r\n\t\t\tEnd If\r\n\t\tNext\r\n\t\tcontains = bFlag\r\n\tEnd Function",
+        "body": " \r\n\t\tIf Not isArray(arr) Then\r\n\t\t\ttoString = \"Supplied parameter is not an array.\"\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tDim i, bFlag\r\n\t\tbFlag = False\r\n\t\tFor i = 0  To UBound(arr)\r\n\t\t\tIf arr(i) = s Then\r\n\t\t\t\tbFlag = True\r\n\t\t\t\tExit For\r\n\t\t\tEnd If\r\n\t\tNext\r\n\t\tcontains = bFlag\r\n\t",
+        "index": 2,
+        "isPublic": true
+      }
+    },
+    "structure": "Class ArrayUtil\n\nPUBLIC_FUNCTION_TOSTRING\n\nPUBLIC_FUNCTION_CONTAINS\n\nEnd Class\n\n",
+    "noMethods": "Class ArrayUtil\n\nEnd Class\n\n"
+  },
+  {
+    "name": "PathUtil",
+    "body": "\n\nClass PathUtil\n\n\tPrivate Property Get DOT\r\n\tDOT = \".\"\r\n\tEnd Property\r\n\tPrivate Property Get DOTDOT\r\n\tDOTDOT = \"..\"\r\n\tEnd Property\n\n\tPrivate oFSO\r\n\tPrivate m_base\r\n\tPrivate m_script\r\n\tPrivate m_temp\n\n\tPrivate Sub Class_Initialize()\r\n\t\tSet oFSO = CreateObject(\"Scripting.FileSystemObject\")\r\n\t\tm_script = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,\"\\\")-1)\r\n\t\tm_base = m_script\r\n\t\tm_temp = Array()\r\n\t\tReDim Preserve m_temp(0)\r\n\t\tm_temp(0) = m_script\r\n\tEnd Sub\n\n\tPublic Property Get ScriptPath\r\n\tScriptPath = m_script\r\n\tEnd Property\n\n\tPublic Property Get BasePath\r\n\tBasePath = m_base\r\n\tEnd Property\n\n\tPublic Property Let BasePath(path)\r\n\tDo While endsWith(path, \"\\\")\r\n\t\tpath = Left(Path, Len(path)-1)\r\n\tLoop\r\n\tm_base = Resolve(path)\r\n\tEchoDX \"New Base Path: %x\", m_base\r\n\tEnd Property\n\n\tPublic Property Get TempBasePath\r\n\tTempBasePath = m_temp(UBound(m_temp))\r\n\tEnd Property\n\n\tPublic Property Let TempBasePath(path)\r\n\tDo While endsWith(path, \"\\\")\r\n\t\tpath = Left(Path, Len(path)-1)\r\n\tLoop\r\n\tIf arrUtil.contains(m_temp, path) Then\r\n\t\tEchoDX \"Temp Path %x already exists; skipped\", path\r\n\tElse\r\n\t\tReDim Preserve m_temp(Ubound(m_temp)+1)\r\n\t\tm_temp(Ubound(m_temp)) = Resolve(path)\r\n\t\tEchoDX \"New Temp Base Path: %x\", m_temp(Ubound(m_temp))\r\n\tEnd If\r\n\tEnd Property\n\n\tFunction Resolve(path)\r\n\t\tDim pathBase, lPath, final\r\n\t\tEchoDX \"path: %x\", path\r\n\t\tIf path = DOT Or path = DOTDOT Then\r\n\t\t\tpath = path & \"\\\"\r\n\t\tEnd If\r\n\t\tEchoDX \"path: %x\", path\n\n\t\tIf oFSO.FolderExists(path) Then\r\n\t\t\tEchoD \"FolderExists\"\r\n\t\t\tResolve = oFSO.GetFolder(path).path\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tIf oFSO.FileExists(path) Then\r\n\t\t\tEchoD \"FileExists\"\r\n\t\t\tResolve = oFSO.GetFile(path).path\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tpathBase = oFSO.BuildPath(m_base, path)\r\n\t\tEchoDX \"Adding base %x to path %x. New Path: %x\", Array(m_base, path, pathBase)\n\n\t\tIf endsWith(pathBase, \"\\\") Then\r\n\t\t\tIf isObject(oFSO.GetFolder(pathBase)) Then\r\n\t\t\t\tEchoD \"EndsWith '\\' -> FolderExists\"\r\n\t\t\t\tResolve = oFSO.GetFolder(pathBase).Path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\tElse\n\n\t\t\tIf oFSO.FolderExists(pathBase) Then\r\n\t\t\t\tEchoD \"FolderExists\"\r\n\t\t\t\tResolve = oFSO.GetFolder(pathBase).path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\n\n\t\t\tIf oFSO.FileExists(pathBase) Then\r\n\t\t\t\tEchoD \"FileExists\"\r\n\t\t\t\tResolve = oFSO.GetFile(pathBase).path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\n\n\t\t\tDim i\r\n\t\t\ti = Ubound(m_temp)\r\n\t\t\tDo\r\n\t\t\t\tlPath = oFSO.BuildPath(m_temp(i), path)\r\n\t\t\t\tEchoDX \"Adding Temp Base path (%x) %x to path %x. New Path: %x\", Array(i, m_temp(i), path, lPath)\r\n\t\t\t\tIf oFSO.FileExists(lPath) Then\r\n\t\t\t\t\tfinal = oFSO.GetFile(lPath).path\r\n\t\t\t\t\tEchoDX \"File Resolved with Temp Base %x\", final\r\n\t\t\t\t\tResolve = final\r\n\t\t\t\t\tExit Function\r\n\t\t\t\tEnd If\r\n\t\t\t\tIf oFSO.FolderExists(lPath) Then\r\n\t\t\t\t\tfinal = oFSO.GetFolder(lPath)\r\n\t\t\t\t\tEchoDX \"Folder Resolved with Temp Base %x\", final\r\n\t\t\t\t\tResolve = final\r\n\t\t\t\t\tExit Function\r\n\t\t\t\tEnd If\r\n\t\t\t\ti = i - 1\r\n\t\t\tLoop While i >= 0\n\n\t\t\tlPath = oFSO.BuildPath(m_script, path)\r\n\t\t\tEchoDX \"Adding script path %x to path %x. New Path: %x\", Array(m_script, path, lPath)\r\n\t\t\tIf oFSO.FileExists(lPath) Then\r\n\t\t\t\tfinal = oFSO.GetFile(lPath).path\r\n\t\t\t\tEchoDX \"File Resolved with Temp Base %x\", final\r\n\t\t\t\tResolve = final\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\t\tIf oFSO.FolderExists(lPath) Then\r\n\t\t\t\tfinal = oFSO.GetFolder(lPath)\r\n\t\t\t\tEchoDX \"Folder Resolved with Temp Base %x\", final\r\n\t\t\t\tResolve = final\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\tEnd If\n\n\t\tEchoD \"Unable to Resolve\"\r\n\t\tResolve = path\r\n\tEnd Function\n\n\tPrivate Sub Class_Terminate()\r\n\t\tSet oFSO = Nothing\r\n\tEnd Sub\n\nEnd Class\n\n",
+    "propertys": {
+      "SCRIPTPATH.GET": {
+        "name": "ScriptPath.Get",
+        "sign": "Public Property Get ScriptPath",
+        "end": "End Property",
+        "absName": "ScriptPath",
+        "code": "\tPublic Property Get ScriptPath\r\n\tScriptPath = m_script\r\n\tEnd Property",
+        "body": "\r\n\tScriptPath = m_script\r\n\t",
+        "index": 1,
+        "isPublic": true
+      },
+      "BASEPATH.GET": {
+        "name": "BasePath.Get",
+        "sign": "Public Property Get BasePath",
+        "end": "End Property",
+        "absName": "BasePath",
+        "code": "\tPublic Property Get BasePath\r\n\tBasePath = m_base\r\n\tEnd Property",
+        "body": "\r\n\tBasePath = m_base\r\n\t",
+        "index": 2,
+        "isPublic": true
+      },
+      "BASEPATH.LET": {
+        "name": "BasePath.Let",
+        "sign": "Public Property Let BasePath(path)",
+        "end": "End Property",
+        "absName": "BasePath",
+        "code": "\tPublic Property Let BasePath(path)\r\n\tDo While endsWith(path, \"\\\")\r\n\t\tpath = Left(Path, Len(path)-1)\r\n\tLoop\r\n\tm_base = Resolve(path)\r\n\tEchoDX \"New Base Path: %x\", m_base\r\n\tEnd Property",
+        "body": "\r\n\tDo While endsWith(path, \"\\\")\r\n\t\tpath = Left(Path, Len(path)-1)\r\n\tLoop\r\n\tm_base = Resolve(path)\r\n\tEchoDX \"New Base Path: %x\", m_base\r\n\t",
+        "index": 3,
+        "isPublic": true
+      },
+      "TEMPBASEPATH.GET": {
+        "name": "TempBasePath.Get",
+        "sign": "Public Property Get TempBasePath",
+        "end": "End Property",
+        "absName": "TempBasePath",
+        "code": "\tPublic Property Get TempBasePath\r\n\tTempBasePath = m_temp(UBound(m_temp))\r\n\tEnd Property",
+        "body": "\r\n\tTempBasePath = m_temp(UBound(m_temp))\r\n\t",
+        "index": 4,
+        "isPublic": true
+      },
+      "TEMPBASEPATH.LET": {
+        "name": "TempBasePath.Let",
+        "sign": "Public Property Let TempBasePath(path)",
+        "end": "End Property",
+        "absName": "TempBasePath",
+        "code": "\tPublic Property Let TempBasePath(path)\r\n\tDo While endsWith(path, \"\\\")\r\n\t\tpath = Left(Path, Len(path)-1)\r\n\tLoop\r\n\tIf arrUtil.contains(m_temp, path) Then\r\n\t\tEchoDX \"Temp Path %x already exists; skipped\", path\r\n\tElse\r\n\t\tReDim Preserve m_temp(Ubound(m_temp)+1)\r\n\t\tm_temp(Ubound(m_temp)) = Resolve(path)\r\n\t\tEchoDX \"New Temp Base Path: %x\", m_temp(Ubound(m_temp))\r\n\tEnd If\r\n\tEnd Property",
+        "body": "\r\n\tDo While endsWith(path, \"\\\")\r\n\t\tpath = Left(Path, Len(path)-1)\r\n\tLoop\r\n\tIf arrUtil.contains(m_temp, path) Then\r\n\t\tEchoDX \"Temp Path %x already exists; skipped\", path\r\n\tElse\r\n\t\tReDim Preserve m_temp(Ubound(m_temp)+1)\r\n\t\tm_temp(Ubound(m_temp)) = Resolve(path)\r\n\t\tEchoDX \"New Temp Base Path: %x\", m_temp(Ubound(m_temp))\r\n\tEnd If\r\n\t",
+        "index": 5,
+        "isPublic": true
+      },
+      "DOT.GET": {
+        "name": "DOT.Get",
+        "sign": "Private Property Get DOT",
+        "end": "End Property",
+        "absName": "DOT",
+        "code": "\tPrivate Property Get DOT\r\n\tDOT = \".\"\r\n\tEnd Property",
+        "body": "\r\n\tDOT = \".\"\r\n\t",
+        "index": 6,
+        "isPublic": false
+      },
+      "DOTDOT.GET": {
+        "name": "DOTDOT.Get",
+        "sign": "Private Property Get DOTDOT",
+        "end": "End Property",
+        "absName": "DOTDOT",
+        "code": "\tPrivate Property Get DOTDOT\r\n\tDOTDOT = \"..\"\r\n\tEnd Property",
+        "body": "\r\n\tDOTDOT = \"..\"\r\n\t",
+        "index": 7,
+        "isPublic": false
+      }
+    },
+    "subs": {
+      "CLASS_INITIALIZE": {
+        "name": "Class_Initialize",
+        "sign": "Private Sub Class_Initialize()",
+        "end": "End Sub",
+        "absName": "Class_Initialize",
+        "code": "\tPrivate Sub Class_Initialize()\r\n\t\tSet oFSO = CreateObject(\"Scripting.FileSystemObject\")\r\n\t\tm_script = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,\"\\\")-1)\r\n\t\tm_base = m_script\r\n\t\tm_temp = Array()\r\n\t\tReDim Preserve m_temp(0)\r\n\t\tm_temp(0) = m_script\r\n\tEnd Sub",
+        "body": "\r\n\t\tSet oFSO = CreateObject(\"Scripting.FileSystemObject\")\r\n\t\tm_script = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,\"\\\")-1)\r\n\t\tm_base = m_script\r\n\t\tm_temp = Array()\r\n\t\tReDim Preserve m_temp(0)\r\n\t\tm_temp(0) = m_script\r\n\t",
+        "index": 1,
+        "isPublic": false
+      },
+      "CLASS_TERMINATE": {
+        "name": "Class_Terminate",
+        "sign": "Private Sub Class_Terminate()",
+        "end": "End Sub",
+        "absName": "Class_Terminate",
+        "code": "\tPrivate Sub Class_Terminate()\r\n\t\tSet oFSO = Nothing\r\n\tEnd Sub",
+        "body": "\r\n\t\tSet oFSO = Nothing\r\n\t",
+        "index": 2,
+        "isPublic": false
+      }
+    },
+    "functions": {
+      "RESOLVE": {
+        "name": "Resolve",
+        "sign": "Function Resolve(path)",
+        "end": "End Function",
+        "absName": "Resolve",
+        "code": "\tFunction Resolve(path)\r\n\t\tDim pathBase, lPath, final\r\n\t\tEchoDX \"path: %x\", path\r\n\t\tIf path = DOT Or path = DOTDOT Then\r\n\t\t\tpath = path & \"\\\"\r\n\t\tEnd If\r\n\t\tEchoDX \"path: %x\", path\n\n\t\tIf oFSO.FolderExists(path) Then\r\n\t\t\tEchoD \"FolderExists\"\r\n\t\t\tResolve = oFSO.GetFolder(path).path\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tIf oFSO.FileExists(path) Then\r\n\t\t\tEchoD \"FileExists\"\r\n\t\t\tResolve = oFSO.GetFile(path).path\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tpathBase = oFSO.BuildPath(m_base, path)\r\n\t\tEchoDX \"Adding base %x to path %x. New Path: %x\", Array(m_base, path, pathBase)\n\n\t\tIf endsWith(pathBase, \"\\\") Then\r\n\t\t\tIf isObject(oFSO.GetFolder(pathBase)) Then\r\n\t\t\t\tEchoD \"EndsWith '\\' -> FolderExists\"\r\n\t\t\t\tResolve = oFSO.GetFolder(pathBase).Path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\tElse\n\n\t\t\tIf oFSO.FolderExists(pathBase) Then\r\n\t\t\t\tEchoD \"FolderExists\"\r\n\t\t\t\tResolve = oFSO.GetFolder(pathBase).path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\n\n\t\t\tIf oFSO.FileExists(pathBase) Then\r\n\t\t\t\tEchoD \"FileExists\"\r\n\t\t\t\tResolve = oFSO.GetFile(pathBase).path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\n\n\t\t\tDim i\r\n\t\t\ti = Ubound(m_temp)\r\n\t\t\tDo\r\n\t\t\t\tlPath = oFSO.BuildPath(m_temp(i), path)\r\n\t\t\t\tEchoDX \"Adding Temp Base path (%x) %x to path %x. New Path: %x\", Array(i, m_temp(i), path, lPath)\r\n\t\t\t\tIf oFSO.FileExists(lPath) Then\r\n\t\t\t\t\tfinal = oFSO.GetFile(lPath).path\r\n\t\t\t\t\tEchoDX \"File Resolved with Temp Base %x\", final\r\n\t\t\t\t\tResolve = final\r\n\t\t\t\t\tExit Function\r\n\t\t\t\tEnd If\r\n\t\t\t\tIf oFSO.FolderExists(lPath) Then\r\n\t\t\t\t\tfinal = oFSO.GetFolder(lPath)\r\n\t\t\t\t\tEchoDX \"Folder Resolved with Temp Base %x\", final\r\n\t\t\t\t\tResolve = final\r\n\t\t\t\t\tExit Function\r\n\t\t\t\tEnd If\r\n\t\t\t\ti = i - 1\r\n\t\t\tLoop While i >= 0\n\n\t\t\tlPath = oFSO.BuildPath(m_script, path)\r\n\t\t\tEchoDX \"Adding script path %x to path %x. New Path: %x\", Array(m_script, path, lPath)\r\n\t\t\tIf oFSO.FileExists(lPath) Then\r\n\t\t\t\tfinal = oFSO.GetFile(lPath).path\r\n\t\t\t\tEchoDX \"File Resolved with Temp Base %x\", final\r\n\t\t\t\tResolve = final\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\t\tIf oFSO.FolderExists(lPath) Then\r\n\t\t\t\tfinal = oFSO.GetFolder(lPath)\r\n\t\t\t\tEchoDX \"Folder Resolved with Temp Base %x\", final\r\n\t\t\t\tResolve = final\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\tEnd If\n\n\t\tEchoD \"Unable to Resolve\"\r\n\t\tResolve = path\r\n\tEnd Function",
+        "body": "\r\n\t\tDim pathBase, lPath, final\r\n\t\tEchoDX \"path: %x\", path\r\n\t\tIf path = DOT Or path = DOTDOT Then\r\n\t\t\tpath = path & \"\\\"\r\n\t\tEnd If\r\n\t\tEchoDX \"path: %x\", path\n\n\t\tIf oFSO.FolderExists(path) Then\r\n\t\t\tEchoD \"FolderExists\"\r\n\t\t\tResolve = oFSO.GetFolder(path).path\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tIf oFSO.FileExists(path) Then\r\n\t\t\tEchoD \"FileExists\"\r\n\t\t\tResolve = oFSO.GetFile(path).path\r\n\t\t\tExit Function\r\n\t\tEnd If\n\n\t\tpathBase = oFSO.BuildPath(m_base, path)\r\n\t\tEchoDX \"Adding base %x to path %x. New Path: %x\", Array(m_base, path, pathBase)\n\n\t\tIf endsWith(pathBase, \"\\\") Then\r\n\t\t\tIf isObject(oFSO.GetFolder(pathBase)) Then\r\n\t\t\t\tEchoD \"EndsWith '\\' -> FolderExists\"\r\n\t\t\t\tResolve = oFSO.GetFolder(pathBase).Path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\tElse\n\n\t\t\tIf oFSO.FolderExists(pathBase) Then\r\n\t\t\t\tEchoD \"FolderExists\"\r\n\t\t\t\tResolve = oFSO.GetFolder(pathBase).path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\n\n\t\t\tIf oFSO.FileExists(pathBase) Then\r\n\t\t\t\tEchoD \"FileExists\"\r\n\t\t\t\tResolve = oFSO.GetFile(pathBase).path\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\n\n\t\t\tDim i\r\n\t\t\ti = Ubound(m_temp)\r\n\t\t\tDo\r\n\t\t\t\tlPath = oFSO.BuildPath(m_temp(i), path)\r\n\t\t\t\tEchoDX \"Adding Temp Base path (%x) %x to path %x. New Path: %x\", Array(i, m_temp(i), path, lPath)\r\n\t\t\t\tIf oFSO.FileExists(lPath) Then\r\n\t\t\t\t\tfinal = oFSO.GetFile(lPath).path\r\n\t\t\t\t\tEchoDX \"File Resolved with Temp Base %x\", final\r\n\t\t\t\t\tResolve = final\r\n\t\t\t\t\tExit Function\r\n\t\t\t\tEnd If\r\n\t\t\t\tIf oFSO.FolderExists(lPath) Then\r\n\t\t\t\t\tfinal = oFSO.GetFolder(lPath)\r\n\t\t\t\t\tEchoDX \"Folder Resolved with Temp Base %x\", final\r\n\t\t\t\t\tResolve = final\r\n\t\t\t\t\tExit Function\r\n\t\t\t\tEnd If\r\n\t\t\t\ti = i - 1\r\n\t\t\tLoop While i >= 0\n\n\t\t\tlPath = oFSO.BuildPath(m_script, path)\r\n\t\t\tEchoDX \"Adding script path %x to path %x. New Path: %x\", Array(m_script, path, lPath)\r\n\t\t\tIf oFSO.FileExists(lPath) Then\r\n\t\t\t\tfinal = oFSO.GetFile(lPath).path\r\n\t\t\t\tEchoDX \"File Resolved with Temp Base %x\", final\r\n\t\t\t\tResolve = final\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\t\tIf oFSO.FolderExists(lPath) Then\r\n\t\t\t\tfinal = oFSO.GetFolder(lPath)\r\n\t\t\t\tEchoDX \"Folder Resolved with Temp Base %x\", final\r\n\t\t\t\tResolve = final\r\n\t\t\t\tExit Function\r\n\t\t\tEnd If\r\n\t\tEnd If\n\n\t\tEchoD \"Unable to Resolve\"\r\n\t\tResolve = path\r\n\t",
+        "index": 1,
+        "isPublic": false
+      }
+    },
+    "structure": "\n\nClass PathUtil\n\nPRIVATE_PROPERTY_DOT.GET\r\nPRIVATE_PROPERTY_DOTDOT.GET\n\n\tPrivate oFSO\r\n\tPrivate m_base\r\n\tPrivate m_script\r\n\tPrivate m_temp\n\nPRIVATE_SUB_CLASS_INITIALIZE\n\nPUBLIC_PROPERTY_SCRIPTPATH.GET\n\nPUBLIC_PROPERTY_BASEPATH.GET\n\nPUBLIC_PROPERTY_BASEPATH.LET\n\nPUBLIC_PROPERTY_TEMPBASEPATH.GET\n\nPUBLIC_PROPERTY_TEMPBASEPATH.LET\n\nPRIVATE_FUNCTION_RESOLVE\n\nPRIVATE_SUB_CLASS_TERMINATE\n\nEnd Class\n\n",
+    "noMethods": "\n\nClass PathUtil\n\n\tPrivate oFSO\r\n\tPrivate m_base\r\n\tPrivate m_script\r\n\tPrivate m_temp\n\nEnd Class\n\n"
+  },
+  {
+    "name": "FSO",
+    "body": "\n\nClass FSO\r\n\tPrivate dir\r\n\tPrivate objFSO\n\n\tPrivate Sub Class_Initialize\r\n\t\tSet objFSO = CreateObject(\"Scripting.FileSystemObject\")\r\n\t\tdir = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,\"\\\"))\r\n\tEnd Sub\n\n\tPublic Sub setDir(s)\r\n\t\tdir = s\r\n\tEnd Sub\n\n\tPublic Function getDir\r\n\t\tgetDir = dir\r\n\tEnd Function\n\n\tPublic Function GetFSO\r\n\t\tSet GetFSO = objFSO\r\n\tEnd Function\n\n\tPublic Function FolderExists(fol)\r\n\t\tFolderExists = objFSO.FolderExists(fol)\r\n\tEnd Function\n\n\tPublic Function CreateFolder(fol)\r\n\t\tCreateFolder = False\r\n\t\tIf FolderExists(fol) Then\r\n\t\t\tCreateFolder = True\r\n\t\tElse\r\n\t\t\tobjFSO.CreateFolder(fol)\r\n\t\t\tCreateFolder = FolderExists(fol)\r\n\t\tEnd If\r\n\tEnd Function\n\n\tPublic Sub WriteFile(strFileName, strMessage, overwrite)\r\n\t\tConst ForReading = 1\r\n\t\tConst ForWriting = 2\r\n\t\tConst ForAppending = 8\r\n\t\tDim mode\r\n\t\tDim oFile\n\n\t\tmode = ForWriting\r\n\t\tIf Not overwrite Then\r\n\t\t\tmode = ForAppending\r\n\t\tEnd If\n\n\t\tIf objFSO.FileExists(strFileName) Then\r\n\t\t\tSet oFile = objFSO.OpenTextFile(strFileName, mode)\r\n\t\tElse\r\n\t\t\tSet oFile = objFSO.CreateTextFile(strFileName)\r\n\t\tEnd If\r\n\t\toFile.WriteLine strMessage\n\n\t\toFile.Close\n\n\t\tSet oFile = Nothing\r\n\tEnd Sub\n\n\tPublic Function GetFileDir(ByVal file)\r\n\t\tEchoDX \"GetFileDir( %x )\", Array(file)\r\n\t\tDim objFile\r\n\t\tSet objFile = objFSO.GetFile(file)\r\n\t\tGetFileDir = objFSO.GetParentFolderName(objFile) \r\n\tEnd Function\n\n\tPublic Function GetFilePath(ByVal file)\r\n\t\tEchoDX \"GetFilePath( %x )\", Array(file)\r\n\t\tDim objFile\r\n\t\tOn Error Resume Next\r\n\t\tSet objFile = objFSO.GetFile(file)\r\n\t\tOn Error GoTo 0\r\n\t\tIf IsObject(objFile) Then\r\n\t\t\tGetFilePath = objFile.Path \r\n\t\tElse\r\n\t\t\tEchoDX \"File %x not found; searching in directory %x\", Array(file,dir)\r\n\t\t\tOn Error Resume Next\r\n\t\t\tSet objFile = objFile.GetFile(objFSO.BuildPath(dir, file))\r\n\t\t\tOn Error GoTo 0\r\n\t\t\tIf IsObject(objFile) Then\r\n\t\t\t\tGetFilePath = objFile.Path \r\n\t\t\tElse\r\n\t\t\t\tGetFilePath = \"File [\" & file & \"] Not found\"\r\n\t\t\tEnd If\r\n\t\tEnd If\r\n\tEnd Function\n\n\tPublic Function GetFileName(ByVal file)\r\n\t\tGetFileName = objFSO.GetFile(file).Name\r\n\tEnd Function\n\n\tPublic Function GetFileExtn(file)\r\n\t\tGetFileExtn = \"\"\r\n\t\tOn Error Resume Next\r\n\t\tGetFileExtn = LCASE(objFSO.GetExtensionName(file))\r\n\t\tOn Error GoTo 0\r\n\tEnd Function\n\n\tPublic Function GetBaseName(ByVal file)\r\n\t\tGetBaseName = Replace(GetFileName(file), \".\" & GetFileExtn(file), \"\")\r\n\tEnd Function\n\n\tPublic Function ReadFile(file)\r\n\t\tfile = putil.Resolve(file)\r\n\t\tEchoDX \"---> File resolved to: %x\", Array(file)\r\n\t\tIf Not FileExists(file) Then \r\n\t\t\tWscript.Echo \"---> File \" & file & \" does not exists.\"\r\n\t\t\tReadFile = \"\"\r\n\t\t\tExit Function\r\n\t\tEnd If\r\n\t\tDim objFile: Set objFile = objFSO.OpenTextFile(file)\r\n\t\tReadFile = objFile.ReadAll()\r\n\t\tobjFile.Close\r\n\tEnd Function\n\n\tPublic Function FileExists(file)\r\n\t\tFileExists = objFSO.FileExists(file)\r\n\tEnd Function\n\n\tPublic Sub DeleteFile(file)\r\n\t\tOn Error Resume Next\r\n\t\tobjFSO.DeleteFile(file)\r\n\t\tOn Error GoTo 0\r\n\tEnd Sub\n\nEnd Class\n\n",
+    "subs": {
+      "SETDIR": {
+        "name": "setDir",
+        "sign": "Public Sub setDir(s)",
+        "end": "End Sub",
+        "absName": "setDir",
+        "code": "\tPublic Sub setDir(s)\r\n\t\tdir = s\r\n\tEnd Sub",
+        "body": "\r\n\t\tdir = s\r\n\t",
+        "index": 1,
+        "isPublic": true
+      },
+      "WRITEFILE": {
+        "name": "WriteFile",
+        "sign": "Public Sub WriteFile(strFileName, strMessage, overwrite)",
+        "end": "End Sub",
+        "absName": "WriteFile",
+        "code": "\tPublic Sub WriteFile(strFileName, strMessage, overwrite)\r\n\t\tConst ForReading = 1\r\n\t\tConst ForWriting = 2\r\n\t\tConst ForAppending = 8\r\n\t\tDim mode\r\n\t\tDim oFile\n\n\t\tmode = ForWriting\r\n\t\tIf Not overwrite Then\r\n\t\t\tmode = ForAppending\r\n\t\tEnd If\n\n\t\tIf objFSO.FileExists(strFileName) Then\r\n\t\t\tSet oFile = objFSO.OpenTextFile(strFileName, mode)\r\n\t\tElse\r\n\t\t\tSet oFile = objFSO.CreateTextFile(strFileName)\r\n\t\tEnd If\r\n\t\toFile.WriteLine strMessage\n\n\t\toFile.Close\n\n\t\tSet oFile = Nothing\r\n\tEnd Sub",
+        "body": "\r\n\t\tConst ForReading = 1\r\n\t\tConst ForWriting = 2\r\n\t\tConst ForAppending = 8\r\n\t\tDim mode\r\n\t\tDim oFile\n\n\t\tmode = ForWriting\r\n\t\tIf Not overwrite Then\r\n\t\t\tmode = ForAppending\r\n\t\tEnd If\n\n\t\tIf objFSO.FileExists(strFileName) Then\r\n\t\t\tSet oFile = objFSO.OpenTextFile(strFileName, mode)\r\n\t\tElse\r\n\t\t\tSet oFile = objFSO.CreateTextFile(strFileName)\r\n\t\tEnd If\r\n\t\toFile.WriteLine strMessage\n\n\t\toFile.Close\n\n\t\tSet oFile = Nothing\r\n\t",
+        "index": 2,
+        "isPublic": true
+      },
+      "DELETEFILE": {
+        "name": "DeleteFile",
+        "sign": "Public Sub DeleteFile(file)",
+        "end": "End Sub",
+        "absName": "DeleteFile",
+        "code": "\tPublic Sub DeleteFile(file)\r\n\t\tOn Error Resume Next\r\n\t\tobjFSO.DeleteFile(file)\r\n\t\tOn Error GoTo 0\r\n\tEnd Sub",
+        "body": "\r\n\t\tOn Error Resume Next\r\n\t\tobjFSO.DeleteFile(file)\r\n\t\tOn Error GoTo 0\r\n\t",
+        "index": 3,
+        "isPublic": true
+      },
+      "CLASS_INITIALIZE": {
+        "name": "Class_Initialize",
+        "sign": "Private Sub Class_Initialize",
+        "end": "End Sub",
+        "absName": "Class_Initialize",
+        "code": "\tPrivate Sub Class_Initialize\r\n\t\tSet objFSO = CreateObject(\"Scripting.FileSystemObject\")\r\n\t\tdir = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,\"\\\"))\r\n\tEnd Sub",
+        "body": "\r\n\t\tSet objFSO = CreateObject(\"Scripting.FileSystemObject\")\r\n\t\tdir = Left(WScript.ScriptFullName,InStrRev(WScript.ScriptFullName,\"\\\"))\r\n\t",
+        "index": 4,
+        "isPublic": false
+      }
+    },
+    "functions": {
+      "GETDIR": {
+        "name": "getDir",
+        "sign": "Public Function getDir",
+        "end": "End Function",
+        "absName": "getDir",
+        "code": "\tPublic Function getDir\r\n\t\tgetDir = dir\r\n\tEnd Function",
+        "body": "\r\n\t\tgetDir = dir\r\n\t",
+        "index": 1,
+        "isPublic": true
+      },
+      "GETFSO": {
+        "name": "GetFSO",
+        "sign": "Public Function GetFSO",
+        "end": "End Function",
+        "absName": "GetFSO",
+        "code": "\tPublic Function GetFSO\r\n\t\tSet GetFSO = objFSO\r\n\tEnd Function",
+        "body": "\r\n\t\tSet GetFSO = objFSO\r\n\t",
+        "index": 2,
+        "isPublic": true
+      },
+      "FOLDEREXISTS": {
+        "name": "FolderExists",
+        "sign": "Public Function FolderExists(fol)",
+        "end": "End Function",
+        "absName": "FolderExists",
+        "code": "\tPublic Function FolderExists(fol)\r\n\t\tFolderExists = objFSO.FolderExists(fol)\r\n\tEnd Function",
+        "body": "\r\n\t\tFolderExists = objFSO.FolderExists(fol)\r\n\t",
+        "index": 3,
+        "isPublic": true
+      },
+      "CREATEFOLDER": {
+        "name": "CreateFolder",
+        "sign": "Public Function CreateFolder(fol)",
+        "end": "End Function",
+        "absName": "CreateFolder",
+        "code": "\tPublic Function CreateFolder(fol)\r\n\t\tCreateFolder = False\r\n\t\tIf FolderExists(fol) Then\r\n\t\t\tCreateFolder = True\r\n\t\tElse\r\n\t\t\tobjFSO.CreateFolder(fol)\r\n\t\t\tCreateFolder = FolderExists(fol)\r\n\t\tEnd If\r\n\tEnd Function",
+        "body": "\r\n\t\tCreateFolder = False\r\n\t\tIf FolderExists(fol) Then\r\n\t\t\tCreateFolder = True\r\n\t\tElse\r\n\t\t\tobjFSO.CreateFolder(fol)\r\n\t\t\tCreateFolder = FolderExists(fol)\r\n\t\tEnd If\r\n\t",
+        "index": 4,
+        "isPublic": true
+      },
+      "GETFILEDIR": {
+        "name": "GetFileDir",
+        "sign": "Public Function GetFileDir(ByVal file)",
+        "end": "End Function",
+        "absName": "GetFileDir",
+        "code": "\tPublic Function GetFileDir(ByVal file)\r\n\t\tEchoDX \"GetFileDir( %x )\", Array(file)\r\n\t\tDim objFile\r\n\t\tSet objFile = objFSO.GetFile(file)\r\n\t\tGetFileDir = objFSO.GetParentFolderName(objFile) \r\n\tEnd Function",
+        "body": "\r\n\t\tEchoDX \"GetFileDir( %x )\", Array(file)\r\n\t\tDim objFile\r\n\t\tSet objFile = objFSO.GetFile(file)\r\n\t\tGetFileDir = objFSO.GetParentFolderName(objFile) \r\n\t",
+        "index": 5,
+        "isPublic": true
+      },
+      "GETFILEPATH": {
+        "name": "GetFilePath",
+        "sign": "Public Function GetFilePath(ByVal file)",
+        "end": "End Function",
+        "absName": "GetFilePath",
+        "code": "\tPublic Function GetFilePath(ByVal file)\r\n\t\tEchoDX \"GetFilePath( %x )\", Array(file)\r\n\t\tDim objFile\r\n\t\tOn Error Resume Next\r\n\t\tSet objFile = objFSO.GetFile(file)\r\n\t\tOn Error GoTo 0\r\n\t\tIf IsObject(objFile) Then\r\n\t\t\tGetFilePath = objFile.Path \r\n\t\tElse\r\n\t\t\tEchoDX \"File %x not found; searching in directory %x\", Array(file,dir)\r\n\t\t\tOn Error Resume Next\r\n\t\t\tSet objFile = objFile.GetFile(objFSO.BuildPath(dir, file))\r\n\t\t\tOn Error GoTo 0\r\n\t\t\tIf IsObject(objFile) Then\r\n\t\t\t\tGetFilePath = objFile.Path \r\n\t\t\tElse\r\n\t\t\t\tGetFilePath = \"File [\" & file & \"] Not found\"\r\n\t\t\tEnd If\r\n\t\tEnd If\r\n\tEnd Function",
+        "body": "\r\n\t\tEchoDX \"GetFilePath( %x )\", Array(file)\r\n\t\tDim objFile\r\n\t\tOn Error Resume Next\r\n\t\tSet objFile = objFSO.GetFile(file)\r\n\t\tOn Error GoTo 0\r\n\t\tIf IsObject(objFile) Then\r\n\t\t\tGetFilePath = objFile.Path \r\n\t\tElse\r\n\t\t\tEchoDX \"File %x not found; searching in directory %x\", Array(file,dir)\r\n\t\t\tOn Error Resume Next\r\n\t\t\tSet objFile = objFile.GetFile(objFSO.BuildPath(dir, file))\r\n\t\t\tOn Error GoTo 0\r\n\t\t\tIf IsObject(objFile) Then\r\n\t\t\t\tGetFilePath = objFile.Path \r\n\t\t\tElse\r\n\t\t\t\tGetFilePath = \"File [\" & file & \"] Not found\"\r\n\t\t\tEnd If\r\n\t\tEnd If\r\n\t",
+        "index": 6,
+        "isPublic": true
+      },
+      "GETFILENAME": {
+        "name": "GetFileName",
+        "sign": "Public Function GetFileName(ByVal file)",
+        "end": "End Function",
+        "absName": "GetFileName",
+        "code": "\tPublic Function GetFileName(ByVal file)\r\n\t\tGetFileName = objFSO.GetFile(file).Name\r\n\tEnd Function",
+        "body": "\r\n\t\tGetFileName = objFSO.GetFile(file).Name\r\n\t",
+        "index": 7,
+        "isPublic": true
+      },
+      "GETFILEEXTN": {
+        "name": "GetFileExtn",
+        "sign": "Public Function GetFileExtn(file)",
+        "end": "End Function",
+        "absName": "GetFileExtn",
+        "code": "\tPublic Function GetFileExtn(file)\r\n\t\tGetFileExtn = \"\"\r\n\t\tOn Error Resume Next\r\n\t\tGetFileExtn = LCASE(objFSO.GetExtensionName(file))\r\n\t\tOn Error GoTo 0\r\n\tEnd Function",
+        "body": "\r\n\t\tGetFileExtn = \"\"\r\n\t\tOn Error Resume Next\r\n\t\tGetFileExtn = LCASE(objFSO.GetExtensionName(file))\r\n\t\tOn Error GoTo 0\r\n\t",
+        "index": 8,
+        "isPublic": true
+      },
+      "GETBASENAME": {
+        "name": "GetBaseName",
+        "sign": "Public Function GetBaseName(ByVal file)",
+        "end": "End Function",
+        "absName": "GetBaseName",
+        "code": "\tPublic Function GetBaseName(ByVal file)\r\n\t\tGetBaseName = Replace(GetFileName(file), \".\" & GetFileExtn(file), \"\")\r\n\tEnd Function",
+        "body": "\r\n\t\tGetBaseName = Replace(GetFileName(file), \".\" & GetFileExtn(file), \"\")\r\n\t",
+        "index": 9,
+        "isPublic": true
+      },
+      "READFILE": {
+        "name": "ReadFile",
+        "sign": "Public Function ReadFile(file)",
+        "end": "End Function",
+        "absName": "ReadFile",
+        "code": "\tPublic Function ReadFile(file)\r\n\t\tfile = putil.Resolve(file)\r\n\t\tEchoDX \"---> File resolved to: %x\", Array(file)\r\n\t\tIf Not FileExists(file) Then \r\n\t\t\tWscript.Echo \"---> File \" & file & \" does not exists.\"\r\n\t\t\tReadFile = \"\"\r\n\t\t\tExit Function\r\n\t\tEnd If\r\n\t\tDim objFile: Set objFile = objFSO.OpenTextFile(file)\r\n\t\tReadFile = objFile.ReadAll()\r\n\t\tobjFile.Close\r\n\tEnd Function",
+        "body": "\r\n\t\tfile = putil.Resolve(file)\r\n\t\tEchoDX \"---> File resolved to: %x\", Array(file)\r\n\t\tIf Not FileExists(file) Then \r\n\t\t\tWscript.Echo \"---> File \" & file & \" does not exists.\"\r\n\t\t\tReadFile = \"\"\r\n\t\t\tExit Function\r\n\t\tEnd If\r\n\t\tDim objFile: Set objFile = objFSO.OpenTextFile(file)\r\n\t\tReadFile = objFile.ReadAll()\r\n\t\tobjFile.Close\r\n\t",
+        "index": 10,
+        "isPublic": true
+      },
+      "FILEEXISTS": {
+        "name": "FileExists",
+        "sign": "Public Function FileExists(file)",
+        "end": "End Function",
+        "absName": "FileExists",
+        "code": "\tPublic Function FileExists(file)\r\n\t\tFileExists = objFSO.FileExists(file)\r\n\tEnd Function",
+        "body": "\r\n\t\tFileExists = objFSO.FileExists(file)\r\n\t",
+        "index": 11,
+        "isPublic": true
+      }
+    },
+    "structure": "\n\nClass FSO\r\n\tPrivate dir\r\n\tPrivate objFSO\n\nPRIVATE_SUB_CLASS_INITIALIZE\n\nPUBLIC_SUB_SETDIR\n\nPUBLIC_FUNCTION_GETDIR\n\nPUBLIC_FUNCTION_GETFSO\n\nPUBLIC_FUNCTION_FOLDEREXISTS\n\nPUBLIC_FUNCTION_CREATEFOLDER\n\nPUBLIC_SUB_WRITEFILE\n\nPUBLIC_FUNCTION_GETFILEDIR\n\nPUBLIC_FUNCTION_GETFILEPATH\n\nPUBLIC_FUNCTION_GETFILENAME\n\nPUBLIC_FUNCTION_GETFILEEXTN\n\nPUBLIC_FUNCTION_GETBASENAME\n\nPUBLIC_FUNCTION_READFILE\n\nPUBLIC_FUNCTION_FILEEXISTS\n\nPUBLIC_SUB_DELETEFILE\n\nEnd Class\n\n",
+    "noMethods": "\n\nClass FSO\r\n\tPrivate dir\r\n\tPrivate objFSO\n\nEnd Class\n\n"
+  },
+  {
+    "name": "Excel",
+    "body": "\n\nClass Excel\n\n    Private Property Get vbext_ct_Document\r\n    vbext_ct_Document = 100\r\n    End Property\r\n    Private Property Get vbext_ct_ClassModule\r\n    vbext_ct_ClassModule = 2\r\n    End Property\r\n    Private Property Get vbext_ct_MSForm\r\n    vbext_ct_MSForm = 3\r\n    End Property\r\n    Private Property Get vbext_ct_StdModule\r\n    vbext_ct_StdModule = 1\r\n    End Property\r\n    Private Property Get vbext_ct_ActiveXDesigner\r\n    vbext_ct_ActiveXDesigner = 11\r\n    End Property\r\n    Private Property Get excel_workbook_protected_level_protected\r\n    excel_workbook_protected_level_protected = 1\r\n    End Property\r\n    Private Property Get ForReading\r\n    ForReading = 1\r\n    End Property\r\n    Private Property Get ForWriting\r\n    ForWriting = 2\r\n    End Property\r\n    Private Property Get ForAppending\r\n    ForAppending = 3\r\n    End Property\r\n    Private Property Get TristateUseDefault\r\n    TristateUseDefault = 2\r\n    End Property\r\n    Private Property Get TristateTrue\r\n    TristateTrue = 1\r\n    End Property\r\n    Private Property Get TristateFalse\r\n    TristateFalse = 0\r\n    End Property\n\n    Public Property Get GetActiveWorkbook\r\n        Set GetActiveWorkbook = ActiveWorkbook\r\n    End Property\n\n    Private Application\r\n    Private ActiveWorkbook\r\n    Private wkbSource\r\n    Private objFSO\n\n    Private Sub Class_Initialize()\r\n        Set objFSO = CreateObject(\"scripting.filesystemobject\")\r\n        set Application = createobject(\"Excel.Application\").Application\r\n        if Application is nothing then\r\n            Echo \"Unable to create Excel Application object.\"\r\n            Err.Clear\r\n            Err.Raise 50001, \"Error in Excel Class\", \"Unable to create Excel application object.\"\r\n            Class_Terminate\r\n        end if\r\n        SetVisibility False\r\n        ShowAlerts False\r\n    End Sub\n\n    Public Sub OpenWorkBook(path)\r\n        On Error Resume Next\r\n        path = putil.Resolve(path)\r\n        EchoDX \"Opening Excel Workbook at path: %x\", path\r\n        set ActiveWorkbook = Application.workbooks.Open(path)\r\n        On Error Goto 0\r\n        if Not IsObject(ActiveWorkbook) then\r\n            EchoX \"Unable to Open Excel Workbook at path %x.\", path\r\n            Err.Clear\r\n            Err.Raise 50002, \"Error in Excel Class\", \"Unable to open Excel Workbook at path \" & path\r\n        end if\n\n        Set wkbSource = Application.Workbooks(ActiveWorkbook.Name)\r\n        EchoX \"Workbook %x opened successfully.\", wkbSource.Name\r\n    End Sub\r\n    Public SUb CloseWorkBook\r\n        On Error Resume Next\r\n        ActiveWorkbook.Close\r\n        On Error Goto 0\r\n    End Sub\n\n    Public Function isProtected\r\n        On Error Resume Next\r\n        isProtected = False\r\n        isProtected = (wkbSource.VBProject.Protection = excel_workbook_protected_level_protected)\r\n        On Error Goto 0\r\n    End Function\n\n    Public Sub SetVisibility(flag)\r\n        Application.Visible = (flag or LCase(flag) = \"true\")\r\n    End Sub\r\n    Public Sub ShowAlerts(flag)\r\n        Application.DisplayAlerts = (flag Or Lcase(flag) = \"true\")\r\n    End Sub\n\n    Public Sub ExportVBAComponents(destination)\r\n        Dim cmpComponent, bExport, szFileName\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot export VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        If IsNull(destination) Or destination = \"\" Then\r\n            EchoX \"Destination directory not provided. Will be uploaded to default direcotry %x\", GetActiveWorkbook.Name\r\n            destination = putil.Resolve(GetActiveWorkbook.Name)\r\n        End If\n\n        destination = objFSO.GetBaseName(destination)\r\n        destination = objFSO.BuildPath(putil.BasePath, destination)\r\n        If cFS.CreateFolder(destination) Then\r\n            EchoX \"Destination Directory successfully created at: %x\", destination\r\n        Else\r\n            EchoX \"Unable to create destination directory at [%x]. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\n\n        If Not objFSO.FolderExists(destination) Then\r\n            EchoX \"Destination folder %x does not exists. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\r\n        destination = ObjFSO.GetFolder(destination)\n\n        On Error Resume Next\r\n        EchoX \"Deleting previously exported VBA Modules in direcotry %x\", destination\r\n        objFSO.DeleteFile objFSO.BuildPath(destination, \"*.cls\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.frm\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.bas\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.frx\"), True\r\n        On Error GoTo 0\n\n        EchoX \"Exporting VBComponents to folder: %x\", destination\r\n        For Each cmpComponent In wkbSource.VBProject.VBComponents\n\n            bExport = True\r\n            szFileName = cmpComponent.Name\n\n            Select Case cmpComponent.Type\r\n                Case vbext_ct_ClassModule\r\n                    szFileName = szFileName & \".cls\"\r\n                Case vbext_ct_MSForm\r\n                    szFileName = szFileName & \".frm\"\r\n                Case vbext_ct_StdModule\r\n                    szFileName = szFileName & \".bas\"\r\n                Case vbext_ct_Document\n\n                    bExport = False\r\n            End Select\n\n            If bExport Then\n\n                cmpComponent.Export objFSO.BuildPath(destination, szFileName)\n\n            End If\r\n        Next \r\n        Echo \"Unpacking completed succesfully.\"\r\n    End Sub\n\n    Public Sub ImportVBAComponents(source)\r\n        Dim cmpComponents, objFile\n\n        If IsNull(source) Or source = \"\" Then\r\n            source = objFSO.GetBaseName(GetActiveWorkbook.Name)\r\n            source = objFSO.BuildPath(putil.BasePath, source)\r\n            EchoX \"Source directory not provided. Assuming default direcotry %x\", source\r\n        End If\n\n        If Not objFSO.FolderExists(source) Then\r\n            EchoX \"Unable to get source directory at: %x. Did you try exporting the scripts first?\", source\r\n            Exit Sub\r\n        End If\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot export VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        Set cmpComponents = wkbSource.VBProject.VBComponents\n\n        DeleteVBAComponents False\n\n        For Each objFile In objFSO.GetFolder(source).Files\r\n            If (objFSO.GetExtensionName(objFile.Name) = \"cls\") Or _\r\n                (objFSO.GetExtensionName(objFile.Name) = \"frm\") Or _\r\n                (objFSO.GetExtensionName(objFile.Name) = \"bas\") Then\r\n                cmpComponents.Import objFile.Path\r\n            End If\r\n        Next\n\n        wkbSource.save\r\n        Echo \"Packing completed succesfully.\"\r\n    End Sub\n\n    Public Sub DeleteVBAComponents(save)\r\n        Dim VBComponents, VBComp\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot delete VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        Echo \"About to delete the VBA components of the workbook\"\r\n        Set VBComponents = wkbSource.VBProject.VBComponents\r\n        For Each VBComp In VBComponents\r\n            If VBComp.Type = vbext_ct_Document Then\n\n            Else\r\n                VBComponents.Remove VBComp\r\n            End If\r\n        Next \r\n        if(save) Then wkbSource.save\r\n    End Sub\n\n    Public Sub SimpleXYPlot(data, destination)\n\n        If IsNull(destination) Or destination = \"\" Then\r\n            EchoX \"Destination directory not provided. Will be uploaded to default direcotry %x\", GetActiveWorkbook.Name\r\n            destination = putil.Resolve(GetActiveWorkbook.Name)\r\n        End If\n\n        destination = objFSO.GetBaseName(destination)\r\n        destination = objFSO.BuildPath(putil.BasePath, destination)\r\n        If cFS.CreateFolder(destination) Then\r\n            EchoX \"Destination Directory successfully created at: %x\", destination\r\n        Else\r\n            EchoX \"Unable to create destination directory at [%x]. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\r\n        destination = objFSO.BuildPath(destination, \"SimpleXYPlot.png\")\n\n        dim arr\r\n        arr = split(data, \",\")\r\n        with Application.ActiveWorkbook.worksheets(1)\r\n            .usedrange.clear\r\n            .Range(\"A2\").value = arr(0)\r\n            .Range(\"B2\").value = arr(1)\r\n            .Range(\"A2\").value = arr(2)\r\n            .Range(\"B2\").value = arr(3)\r\n            .Range(\"A3\").value = arr(4)\r\n            .Range(\"B3\").value = arr(5)\r\n            .Range(\"A4\").value = arr(6)\r\n            .Range(\"B4\").value = arr(7)\r\n        end with\r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!PlotTheChart\", \"SimpleXY\", destination, \"Dark\"  \r\n    End Sub\n\n    Public Sub RunModuleMacro(macro) \r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!\" & macro \r\n    End Sub\n\n    Public Sub RunSheetMacro(sheet, macro)\r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!'\" & sheet & \"'.\" & macro\r\n    End Sub\n\n    Private Sub Class_Terminate()\r\n        EchoD \"Excel Class being terminated.\"\r\n        On Error Resume Next\r\n        ShowAlerts\r\n        ActiveWorkbook.close\r\n        set ActiveWorkbook = nothing\r\n        Application.quit\r\n        set Application = nothing\r\n        On Error Goto 0\r\n    End Sub\n\nEnd Class\n\n",
+    "propertys": {
+      "GETACTIVEWORKBOOK.GET": {
+        "name": "GetActiveWorkbook.Get",
+        "sign": "Public Property Get GetActiveWorkbook",
+        "end": "End Property",
+        "absName": "GetActiveWorkbook",
+        "code": "    Public Property Get GetActiveWorkbook\r\n        Set GetActiveWorkbook = ActiveWorkbook\r\n    End Property",
+        "body": "\r\n        Set GetActiveWorkbook = ActiveWorkbook\r\n    ",
+        "index": 1,
+        "isPublic": true
+      },
+      "VBEXT_CT_DOCUMENT.GET": {
+        "name": "vbext_ct_Document.Get",
+        "sign": "Private Property Get vbext_ct_Document",
+        "end": "End Property",
+        "absName": "vbext_ct_Document",
+        "code": "    Private Property Get vbext_ct_Document\r\n    vbext_ct_Document = 100\r\n    End Property",
+        "body": "\r\n    vbext_ct_Document = 100\r\n    ",
+        "index": 2,
+        "isPublic": false
+      },
+      "VBEXT_CT_CLASSMODULE.GET": {
+        "name": "vbext_ct_ClassModule.Get",
+        "sign": "Private Property Get vbext_ct_ClassModule",
+        "end": "End Property",
+        "absName": "vbext_ct_ClassModule",
+        "code": "    Private Property Get vbext_ct_ClassModule\r\n    vbext_ct_ClassModule = 2\r\n    End Property",
+        "body": "\r\n    vbext_ct_ClassModule = 2\r\n    ",
+        "index": 3,
+        "isPublic": false
+      },
+      "VBEXT_CT_MSFORM.GET": {
+        "name": "vbext_ct_MSForm.Get",
+        "sign": "Private Property Get vbext_ct_MSForm",
+        "end": "End Property",
+        "absName": "vbext_ct_MSForm",
+        "code": "    Private Property Get vbext_ct_MSForm\r\n    vbext_ct_MSForm = 3\r\n    End Property",
+        "body": "\r\n    vbext_ct_MSForm = 3\r\n    ",
+        "index": 4,
+        "isPublic": false
+      },
+      "VBEXT_CT_STDMODULE.GET": {
+        "name": "vbext_ct_StdModule.Get",
+        "sign": "Private Property Get vbext_ct_StdModule",
+        "end": "End Property",
+        "absName": "vbext_ct_StdModule",
+        "code": "    Private Property Get vbext_ct_StdModule\r\n    vbext_ct_StdModule = 1\r\n    End Property",
+        "body": "\r\n    vbext_ct_StdModule = 1\r\n    ",
+        "index": 5,
+        "isPublic": false
+      },
+      "VBEXT_CT_ACTIVEXDESIGNER.GET": {
+        "name": "vbext_ct_ActiveXDesigner.Get",
+        "sign": "Private Property Get vbext_ct_ActiveXDesigner",
+        "end": "End Property",
+        "absName": "vbext_ct_ActiveXDesigner",
+        "code": "    Private Property Get vbext_ct_ActiveXDesigner\r\n    vbext_ct_ActiveXDesigner = 11\r\n    End Property",
+        "body": "\r\n    vbext_ct_ActiveXDesigner = 11\r\n    ",
+        "index": 6,
+        "isPublic": false
+      },
+      "EXCEL_WORKBOOK_PROTECTED_LEVEL_PROTECTED.GET": {
+        "name": "excel_workbook_protected_level_protected.Get",
+        "sign": "Private Property Get excel_workbook_protected_level_protected",
+        "end": "End Property",
+        "absName": "excel_workbook_protected_level_protected",
+        "code": "    Private Property Get excel_workbook_protected_level_protected\r\n    excel_workbook_protected_level_protected = 1\r\n    End Property",
+        "body": "\r\n    excel_workbook_protected_level_protected = 1\r\n    ",
+        "index": 7,
+        "isPublic": false
+      },
+      "FORREADING.GET": {
+        "name": "ForReading.Get",
+        "sign": "Private Property Get ForReading",
+        "end": "End Property",
+        "absName": "ForReading",
+        "code": "    Private Property Get ForReading\r\n    ForReading = 1\r\n    End Property",
+        "body": "\r\n    ForReading = 1\r\n    ",
+        "index": 8,
+        "isPublic": false
+      },
+      "FORWRITING.GET": {
+        "name": "ForWriting.Get",
+        "sign": "Private Property Get ForWriting",
+        "end": "End Property",
+        "absName": "ForWriting",
+        "code": "    Private Property Get ForWriting\r\n    ForWriting = 2\r\n    End Property",
+        "body": "\r\n    ForWriting = 2\r\n    ",
+        "index": 9,
+        "isPublic": false
+      },
+      "FORAPPENDING.GET": {
+        "name": "ForAppending.Get",
+        "sign": "Private Property Get ForAppending",
+        "end": "End Property",
+        "absName": "ForAppending",
+        "code": "    Private Property Get ForAppending\r\n    ForAppending = 3\r\n    End Property",
+        "body": "\r\n    ForAppending = 3\r\n    ",
+        "index": 10,
+        "isPublic": false
+      },
+      "TRISTATEUSEDEFAULT.GET": {
+        "name": "TristateUseDefault.Get",
+        "sign": "Private Property Get TristateUseDefault",
+        "end": "End Property",
+        "absName": "TristateUseDefault",
+        "code": "    Private Property Get TristateUseDefault\r\n    TristateUseDefault = 2\r\n    End Property",
+        "body": "\r\n    TristateUseDefault = 2\r\n    ",
+        "index": 11,
+        "isPublic": false
+      },
+      "TRISTATETRUE.GET": {
+        "name": "TristateTrue.Get",
+        "sign": "Private Property Get TristateTrue",
+        "end": "End Property",
+        "absName": "TristateTrue",
+        "code": "    Private Property Get TristateTrue\r\n    TristateTrue = 1\r\n    End Property",
+        "body": "\r\n    TristateTrue = 1\r\n    ",
+        "index": 12,
+        "isPublic": false
+      },
+      "TRISTATEFALSE.GET": {
+        "name": "TristateFalse.Get",
+        "sign": "Private Property Get TristateFalse",
+        "end": "End Property",
+        "absName": "TristateFalse",
+        "code": "    Private Property Get TristateFalse\r\n    TristateFalse = 0\r\n    End Property",
+        "body": "\r\n    TristateFalse = 0\r\n    ",
+        "index": 13,
+        "isPublic": false
+      }
+    },
+    "subs": {
+      "OPENWORKBOOK": {
+        "name": "OpenWorkBook",
+        "sign": "Public Sub OpenWorkBook(path)",
+        "end": "End Sub",
+        "absName": "OpenWorkBook",
+        "code": "    Public Sub OpenWorkBook(path)\r\n        On Error Resume Next\r\n        path = putil.Resolve(path)\r\n        EchoDX \"Opening Excel Workbook at path: %x\", path\r\n        set ActiveWorkbook = Application.workbooks.Open(path)\r\n        On Error Goto 0\r\n        if Not IsObject(ActiveWorkbook) then\r\n            EchoX \"Unable to Open Excel Workbook at path %x.\", path\r\n            Err.Clear\r\n            Err.Raise 50002, \"Error in Excel Class\", \"Unable to open Excel Workbook at path \" & path\r\n        end if\n\n        Set wkbSource = Application.Workbooks(ActiveWorkbook.Name)\r\n        EchoX \"Workbook %x opened successfully.\", wkbSource.Name\r\n    End Sub",
+        "body": "\r\n        On Error Resume Next\r\n        path = putil.Resolve(path)\r\n        EchoDX \"Opening Excel Workbook at path: %x\", path\r\n        set ActiveWorkbook = Application.workbooks.Open(path)\r\n        On Error Goto 0\r\n        if Not IsObject(ActiveWorkbook) then\r\n            EchoX \"Unable to Open Excel Workbook at path %x.\", path\r\n            Err.Clear\r\n            Err.Raise 50002, \"Error in Excel Class\", \"Unable to open Excel Workbook at path \" & path\r\n        end if\n\n        Set wkbSource = Application.Workbooks(ActiveWorkbook.Name)\r\n        EchoX \"Workbook %x opened successfully.\", wkbSource.Name\r\n    ",
+        "index": 1,
+        "isPublic": true
+      },
+      "CLOSEWORKBOOK": {
+        "name": "CloseWorkBook",
+        "sign": "Public SUb CloseWorkBook",
+        "end": "End Sub",
+        "absName": "CloseWorkBook",
+        "code": "    Public SUb CloseWorkBook\r\n        On Error Resume Next\r\n        ActiveWorkbook.Close\r\n        On Error Goto 0\r\n    End Sub",
+        "body": "\r\n        On Error Resume Next\r\n        ActiveWorkbook.Close\r\n        On Error Goto 0\r\n    ",
+        "index": 2,
+        "isPublic": true
+      },
+      "SETVISIBILITY": {
+        "name": "SetVisibility",
+        "sign": "Public Sub SetVisibility(flag)",
+        "end": "End Sub",
+        "absName": "SetVisibility",
+        "code": "    Public Sub SetVisibility(flag)\r\n        Application.Visible = (flag or LCase(flag) = \"true\")\r\n    End Sub",
+        "body": "\r\n        Application.Visible = (flag or LCase(flag) = \"true\")\r\n    ",
+        "index": 3,
+        "isPublic": true
+      },
+      "SHOWALERTS": {
+        "name": "ShowAlerts",
+        "sign": "Public Sub ShowAlerts(flag)",
+        "end": "End Sub",
+        "absName": "ShowAlerts",
+        "code": "    Public Sub ShowAlerts(flag)\r\n        Application.DisplayAlerts = (flag Or Lcase(flag) = \"true\")\r\n    End Sub",
+        "body": "\r\n        Application.DisplayAlerts = (flag Or Lcase(flag) = \"true\")\r\n    ",
+        "index": 4,
+        "isPublic": true
+      },
+      "EXPORTVBACOMPONENTS": {
+        "name": "ExportVBAComponents",
+        "sign": "Public Sub ExportVBAComponents(destination)",
+        "end": "End Sub",
+        "absName": "ExportVBAComponents",
+        "code": "    Public Sub ExportVBAComponents(destination)\r\n        Dim cmpComponent, bExport, szFileName\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot export VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        If IsNull(destination) Or destination = \"\" Then\r\n            EchoX \"Destination directory not provided. Will be uploaded to default direcotry %x\", GetActiveWorkbook.Name\r\n            destination = putil.Resolve(GetActiveWorkbook.Name)\r\n        End If\n\n        destination = objFSO.GetBaseName(destination)\r\n        destination = objFSO.BuildPath(putil.BasePath, destination)\r\n        If cFS.CreateFolder(destination) Then\r\n            EchoX \"Destination Directory successfully created at: %x\", destination\r\n        Else\r\n            EchoX \"Unable to create destination directory at [%x]. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\n\n        If Not objFSO.FolderExists(destination) Then\r\n            EchoX \"Destination folder %x does not exists. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\r\n        destination = ObjFSO.GetFolder(destination)\n\n        On Error Resume Next\r\n        EchoX \"Deleting previously exported VBA Modules in direcotry %x\", destination\r\n        objFSO.DeleteFile objFSO.BuildPath(destination, \"*.cls\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.frm\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.bas\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.frx\"), True\r\n        On Error GoTo 0\n\n        EchoX \"Exporting VBComponents to folder: %x\", destination\r\n        For Each cmpComponent In wkbSource.VBProject.VBComponents\n\n            bExport = True\r\n            szFileName = cmpComponent.Name\n\n            Select Case cmpComponent.Type\r\n                Case vbext_ct_ClassModule\r\n                    szFileName = szFileName & \".cls\"\r\n                Case vbext_ct_MSForm\r\n                    szFileName = szFileName & \".frm\"\r\n                Case vbext_ct_StdModule\r\n                    szFileName = szFileName & \".bas\"\r\n                Case vbext_ct_Document\n\n                    bExport = False\r\n            End Select\n\n            If bExport Then\n\n                cmpComponent.Export objFSO.BuildPath(destination, szFileName)\n\n            End If\r\n        Next \r\n        Echo \"Unpacking completed succesfully.\"\r\n    End Sub",
+        "body": "\r\n        Dim cmpComponent, bExport, szFileName\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot export VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        If IsNull(destination) Or destination = \"\" Then\r\n            EchoX \"Destination directory not provided. Will be uploaded to default direcotry %x\", GetActiveWorkbook.Name\r\n            destination = putil.Resolve(GetActiveWorkbook.Name)\r\n        End If\n\n        destination = objFSO.GetBaseName(destination)\r\n        destination = objFSO.BuildPath(putil.BasePath, destination)\r\n        If cFS.CreateFolder(destination) Then\r\n            EchoX \"Destination Directory successfully created at: %x\", destination\r\n        Else\r\n            EchoX \"Unable to create destination directory at [%x]. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\n\n        If Not objFSO.FolderExists(destination) Then\r\n            EchoX \"Destination folder %x does not exists. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\r\n        destination = ObjFSO.GetFolder(destination)\n\n        On Error Resume Next\r\n        EchoX \"Deleting previously exported VBA Modules in direcotry %x\", destination\r\n        objFSO.DeleteFile objFSO.BuildPath(destination, \"*.cls\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.frm\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.bas\"), True\r\n        objFSO.DeleteFile  objFSO.BuildPath(destination, \"*.frx\"), True\r\n        On Error GoTo 0\n\n        EchoX \"Exporting VBComponents to folder: %x\", destination\r\n        For Each cmpComponent In wkbSource.VBProject.VBComponents\n\n            bExport = True\r\n            szFileName = cmpComponent.Name\n\n            Select Case cmpComponent.Type\r\n                Case vbext_ct_ClassModule\r\n                    szFileName = szFileName & \".cls\"\r\n                Case vbext_ct_MSForm\r\n                    szFileName = szFileName & \".frm\"\r\n                Case vbext_ct_StdModule\r\n                    szFileName = szFileName & \".bas\"\r\n                Case vbext_ct_Document\n\n                    bExport = False\r\n            End Select\n\n            If bExport Then\n\n                cmpComponent.Export objFSO.BuildPath(destination, szFileName)\n\n            End If\r\n        Next \r\n        Echo \"Unpacking completed succesfully.\"\r\n    ",
+        "index": 5,
+        "isPublic": true
+      },
+      "IMPORTVBACOMPONENTS": {
+        "name": "ImportVBAComponents",
+        "sign": "Public Sub ImportVBAComponents(source)",
+        "end": "End Sub",
+        "absName": "ImportVBAComponents",
+        "code": "    Public Sub ImportVBAComponents(source)\r\n        Dim cmpComponents, objFile\n\n        If IsNull(source) Or source = \"\" Then\r\n            source = objFSO.GetBaseName(GetActiveWorkbook.Name)\r\n            source = objFSO.BuildPath(putil.BasePath, source)\r\n            EchoX \"Source directory not provided. Assuming default direcotry %x\", source\r\n        End If\n\n        If Not objFSO.FolderExists(source) Then\r\n            EchoX \"Unable to get source directory at: %x. Did you try exporting the scripts first?\", source\r\n            Exit Sub\r\n        End If\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot export VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        Set cmpComponents = wkbSource.VBProject.VBComponents\n\n        DeleteVBAComponents False\n\n        For Each objFile In objFSO.GetFolder(source).Files\r\n            If (objFSO.GetExtensionName(objFile.Name) = \"cls\") Or _\r\n                (objFSO.GetExtensionName(objFile.Name) = \"frm\") Or _\r\n                (objFSO.GetExtensionName(objFile.Name) = \"bas\") Then\r\n                cmpComponents.Import objFile.Path\r\n            End If\r\n        Next\n\n        wkbSource.save\r\n        Echo \"Packing completed succesfully.\"\r\n    End Sub",
+        "body": "\r\n        Dim cmpComponents, objFile\n\n        If IsNull(source) Or source = \"\" Then\r\n            source = objFSO.GetBaseName(GetActiveWorkbook.Name)\r\n            source = objFSO.BuildPath(putil.BasePath, source)\r\n            EchoX \"Source directory not provided. Assuming default direcotry %x\", source\r\n        End If\n\n        If Not objFSO.FolderExists(source) Then\r\n            EchoX \"Unable to get source directory at: %x. Did you try exporting the scripts first?\", source\r\n            Exit Sub\r\n        End If\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot export VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        Set cmpComponents = wkbSource.VBProject.VBComponents\n\n        DeleteVBAComponents False\n\n        For Each objFile In objFSO.GetFolder(source).Files\r\n            If (objFSO.GetExtensionName(objFile.Name) = \"cls\") Or _\r\n                (objFSO.GetExtensionName(objFile.Name) = \"frm\") Or _\r\n                (objFSO.GetExtensionName(objFile.Name) = \"bas\") Then\r\n                cmpComponents.Import objFile.Path\r\n            End If\r\n        Next\n\n        wkbSource.save\r\n        Echo \"Packing completed succesfully.\"\r\n    ",
+        "index": 6,
+        "isPublic": true
+      },
+      "DELETEVBACOMPONENTS": {
+        "name": "DeleteVBAComponents",
+        "sign": "Public Sub DeleteVBAComponents(save)",
+        "end": "End Sub",
+        "absName": "DeleteVBAComponents",
+        "code": "    Public Sub DeleteVBAComponents(save)\r\n        Dim VBComponents, VBComp\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot delete VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        Echo \"About to delete the VBA components of the workbook\"\r\n        Set VBComponents = wkbSource.VBProject.VBComponents\r\n        For Each VBComp In VBComponents\r\n            If VBComp.Type = vbext_ct_Document Then\n\n            Else\r\n                VBComponents.Remove VBComp\r\n            End If\r\n        Next \r\n        if(save) Then wkbSource.save\r\n    End Sub",
+        "body": "\r\n        Dim VBComponents, VBComp\n\n        If isProtected Then\r\n            Echo \"The workbook is protected. Cannot delete VB Components.\"\r\n            Exit Sub\r\n        End If\n\n        Echo \"About to delete the VBA components of the workbook\"\r\n        Set VBComponents = wkbSource.VBProject.VBComponents\r\n        For Each VBComp In VBComponents\r\n            If VBComp.Type = vbext_ct_Document Then\n\n            Else\r\n                VBComponents.Remove VBComp\r\n            End If\r\n        Next \r\n        if(save) Then wkbSource.save\r\n    ",
+        "index": 7,
+        "isPublic": true
+      },
+      "SIMPLEXYPLOT": {
+        "name": "SimpleXYPlot",
+        "sign": "Public Sub SimpleXYPlot(data, destination)",
+        "end": "End Sub",
+        "absName": "SimpleXYPlot",
+        "code": "    Public Sub SimpleXYPlot(data, destination)\n\n        If IsNull(destination) Or destination = \"\" Then\r\n            EchoX \"Destination directory not provided. Will be uploaded to default direcotry %x\", GetActiveWorkbook.Name\r\n            destination = putil.Resolve(GetActiveWorkbook.Name)\r\n        End If\n\n        destination = objFSO.GetBaseName(destination)\r\n        destination = objFSO.BuildPath(putil.BasePath, destination)\r\n        If cFS.CreateFolder(destination) Then\r\n            EchoX \"Destination Directory successfully created at: %x\", destination\r\n        Else\r\n            EchoX \"Unable to create destination directory at [%x]. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\r\n        destination = objFSO.BuildPath(destination, \"SimpleXYPlot.png\")\n\n        dim arr\r\n        arr = split(data, \",\")\r\n        with Application.ActiveWorkbook.worksheets(1)\r\n            .usedrange.clear\r\n            .Range(\"A2\").value = arr(0)\r\n            .Range(\"B2\").value = arr(1)\r\n            .Range(\"A2\").value = arr(2)\r\n            .Range(\"B2\").value = arr(3)\r\n            .Range(\"A3\").value = arr(4)\r\n            .Range(\"B3\").value = arr(5)\r\n            .Range(\"A4\").value = arr(6)\r\n            .Range(\"B4\").value = arr(7)\r\n        end with\r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!PlotTheChart\", \"SimpleXY\", destination, \"Dark\"  \r\n    End Sub",
+        "body": "\n\n        If IsNull(destination) Or destination = \"\" Then\r\n            EchoX \"Destination directory not provided. Will be uploaded to default direcotry %x\", GetActiveWorkbook.Name\r\n            destination = putil.Resolve(GetActiveWorkbook.Name)\r\n        End If\n\n        destination = objFSO.GetBaseName(destination)\r\n        destination = objFSO.BuildPath(putil.BasePath, destination)\r\n        If cFS.CreateFolder(destination) Then\r\n            EchoX \"Destination Directory successfully created at: %x\", destination\r\n        Else\r\n            EchoX \"Unable to create destination directory at [%x]. Please create it and retry.\", destination\r\n            Exit Sub\r\n        End If\r\n        destination = objFSO.BuildPath(destination, \"SimpleXYPlot.png\")\n\n        dim arr\r\n        arr = split(data, \",\")\r\n        with Application.ActiveWorkbook.worksheets(1)\r\n            .usedrange.clear\r\n            .Range(\"A2\").value = arr(0)\r\n            .Range(\"B2\").value = arr(1)\r\n            .Range(\"A2\").value = arr(2)\r\n            .Range(\"B2\").value = arr(3)\r\n            .Range(\"A3\").value = arr(4)\r\n            .Range(\"B3\").value = arr(5)\r\n            .Range(\"A4\").value = arr(6)\r\n            .Range(\"B4\").value = arr(7)\r\n        end with\r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!PlotTheChart\", \"SimpleXY\", destination, \"Dark\"  \r\n    ",
+        "index": 8,
+        "isPublic": true
+      },
+      "RUNMODULEMACRO": {
+        "name": "RunModuleMacro",
+        "sign": "Public Sub RunModuleMacro(macro)",
+        "end": "End Sub",
+        "absName": "RunModuleMacro",
+        "code": "    Public Sub RunModuleMacro(macro) \r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!\" & macro \r\n    End Sub",
+        "body": " \r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!\" & macro \r\n    ",
+        "index": 9,
+        "isPublic": true
+      },
+      "RUNSHEETMACRO": {
+        "name": "RunSheetMacro",
+        "sign": "Public Sub RunSheetMacro(sheet, macro)",
+        "end": "End Sub",
+        "absName": "RunSheetMacro",
+        "code": "    Public Sub RunSheetMacro(sheet, macro)\r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!'\" & sheet & \"'.\" & macro\r\n    End Sub",
+        "body": "\r\n        Application.Run \"'\" & ActiveWorkbook.Name & \"'!'\" & sheet & \"'.\" & macro\r\n    ",
+        "index": 10,
+        "isPublic": true
+      },
+      "CLASS_INITIALIZE": {
+        "name": "Class_Initialize",
+        "sign": "Private Sub Class_Initialize()",
+        "end": "End Sub",
+        "absName": "Class_Initialize",
+        "code": "    Private Sub Class_Initialize()\r\n        Set objFSO = CreateObject(\"scripting.filesystemobject\")\r\n        set Application = createobject(\"Excel.Application\").Application\r\n        if Application is nothing then\r\n            Echo \"Unable to create Excel Application object.\"\r\n            Err.Clear\r\n            Err.Raise 50001, \"Error in Excel Class\", \"Unable to create Excel application object.\"\r\n            Class_Terminate\r\n        end if\r\n        SetVisibility False\r\n        ShowAlerts False\r\n    End Sub",
+        "body": "\r\n        Set objFSO = CreateObject(\"scripting.filesystemobject\")\r\n        set Application = createobject(\"Excel.Application\").Application\r\n        if Application is nothing then\r\n            Echo \"Unable to create Excel Application object.\"\r\n            Err.Clear\r\n            Err.Raise 50001, \"Error in Excel Class\", \"Unable to create Excel application object.\"\r\n            Class_Terminate\r\n        end if\r\n        SetVisibility False\r\n        ShowAlerts False\r\n    ",
+        "index": 11,
+        "isPublic": false
+      },
+      "CLASS_TERMINATE": {
+        "name": "Class_Terminate",
+        "sign": "Private Sub Class_Terminate()",
+        "end": "End Sub",
+        "absName": "Class_Terminate",
+        "code": "    Private Sub Class_Terminate()\r\n        EchoD \"Excel Class being terminated.\"\r\n        On Error Resume Next\r\n        ShowAlerts\r\n        ActiveWorkbook.close\r\n        set ActiveWorkbook = nothing\r\n        Application.quit\r\n        set Application = nothing\r\n        On Error Goto 0\r\n    End Sub",
+        "body": "\r\n        EchoD \"Excel Class being terminated.\"\r\n        On Error Resume Next\r\n        ShowAlerts\r\n        ActiveWorkbook.close\r\n        set ActiveWorkbook = nothing\r\n        Application.quit\r\n        set Application = nothing\r\n        On Error Goto 0\r\n    ",
+        "index": 12,
+        "isPublic": false
+      }
+    },
+    "functions": {
+      "ISPROTECTED": {
+        "name": "isProtected",
+        "sign": "Public Function isProtected",
+        "end": "End Function",
+        "absName": "isProtected",
+        "code": "    Public Function isProtected\r\n        On Error Resume Next\r\n        isProtected = False\r\n        isProtected = (wkbSource.VBProject.Protection = excel_workbook_protected_level_protected)\r\n        On Error Goto 0\r\n    End Function",
+        "body": "\r\n        On Error Resume Next\r\n        isProtected = False\r\n        isProtected = (wkbSource.VBProject.Protection = excel_workbook_protected_level_protected)\r\n        On Error Goto 0\r\n    ",
+        "index": 1,
+        "isPublic": true
+      }
+    },
+    "structure": "\n\nClass Excel\n\nPRIVATE_PROPERTY_VBEXT_CT_DOCUMENT.GET\r\nPRIVATE_PROPERTY_VBEXT_CT_CLASSMODULE.GET\r\nPRIVATE_PROPERTY_VBEXT_CT_MSFORM.GET\r\nPRIVATE_PROPERTY_VBEXT_CT_STDMODULE.GET\r\nPRIVATE_PROPERTY_VBEXT_CT_ACTIVEXDESIGNER.GET\r\nPRIVATE_PROPERTY_EXCEL_WORKBOOK_PROTECTED_LEVEL_PROTECTED.GET\r\nPRIVATE_PROPERTY_FORREADING.GET\r\nPRIVATE_PROPERTY_FORWRITING.GET\r\nPRIVATE_PROPERTY_FORAPPENDING.GET\r\nPRIVATE_PROPERTY_TRISTATEUSEDEFAULT.GET\r\nPRIVATE_PROPERTY_TRISTATETRUE.GET\r\nPRIVATE_PROPERTY_TRISTATEFALSE.GET\n\nPUBLIC_PROPERTY_GETACTIVEWORKBOOK.GET\n\n    Private Application\r\n    Private ActiveWorkbook\r\n    Private wkbSource\r\n    Private objFSO\n\nPRIVATE_SUB_CLASS_INITIALIZE\n\nPUBLIC_SUB_OPENWORKBOOK\r\nPUBLIC_SUB_CLOSEWORKBOOK\n\nPUBLIC_FUNCTION_ISPROTECTED\n\nPUBLIC_SUB_SETVISIBILITY\r\nPUBLIC_SUB_SHOWALERTS\n\nPUBLIC_SUB_EXPORTVBACOMPONENTS\n\nPUBLIC_SUB_IMPORTVBACOMPONENTS\n\nPUBLIC_SUB_DELETEVBACOMPONENTS\n\nPUBLIC_SUB_SIMPLEXYPLOT\n\nPUBLIC_SUB_RUNMODULEMACRO\n\nPUBLIC_SUB_RUNSHEETMACRO\n\nPRIVATE_SUB_CLASS_TERMINATE\n\nEnd Class\n\n",
+    "noMethods": "\n\nClass Excel\n\n    Private Application\r\n    Private ActiveWorkbook\r\n    Private wkbSource\r\n    Private objFSO\n\nEnd Class\n\n"
+  }
+]
