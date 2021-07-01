@@ -1,17 +1,16 @@
 const FUNC = require('./functions');
 const RX = require('./constants');
 
-let clsNoMethods;
+let g_clsNoMethods;
 
 const extractBody = (code, sign, end) => code.substring((code.indexOf(sign) + sign.length), code.indexOf(end));
 
-function extract_methods(type, code, pub=false) {
+function extract_methods(type, code, pub = false) {
     type = FUNC.typeCheck(type);
     if (type === 'UNKNOWN') throw new Error("Invalid method type supplied. Must be one of SUB/FUNCTION/PROPERTY.")
-    
+
     let rx = (pub ? `[ \t]*PUBLIC[ \t]*` : `[ \t]*(?:PRIVATE)*[ \t]*`);
     rx += `((?:DEFAULT)*[ \t]*)${type}[ \t]+(?:(GET|SET|LET)[ \t]*)*(?:.*[\r\n])*?(.*)END ${type}[ \t]*`;
-    // console.log("rx:", rx)
     return code.match(new RegExp(rx, 'igmu'))
 }
 
@@ -20,15 +19,12 @@ function extract_classes(code) {
 }
 
 function classExtends(code) {
-    // var re = new RegExp('CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class', 'igsm')
     var re = /CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class/igsm
     var match = re.exec(code);
-    // console.log('match', match)
     return match ? { base: match[1], _extends: match[2] } : null
 }
 
 function extract_className(code) {
-    // console.log('searching class name in:' + code)
     var re = /CLASS[ \t]+(\w+)(.*)END Class/igsm
     var match = re.exec(code);
     return match[1]
@@ -42,24 +38,20 @@ function extract_procedureSignature(index, code, type) {
     else if (type === 'FUNCTION') re = RX.FUNCTION
     else if (type === 'PROPERTY') re = RX.PROPERTY
     let m;
-    //TODO: without this while, the match is not working for all combinations.
-    //But try to merge both into one.
+    let match = [];
     while ((m = re.exec(code)) !== null) {
         // This is necessary to avoid infinite loops with zero-width matches
         if (m.index === re.lastIndex) {
             re.lastIndex++;
         }
-        
-        m.forEach((match, groupIndex) => {
-            // if (type === 'PROPERTY') console.log(`Found match, group ${groupIndex}: ${match}`);
+
+        m.forEach((_match, groupIndex) => {
+            match.push(_match)
         });
     }
-    var match = re.exec(code);
     let out = {
         name: `${type}_${index}`
     }
-    // if (type === 'PROPERTY') 
-    // console.log('\n\n' + match);
     if (match) {
         out.sign = match[1];
         out.absName = match[4]
@@ -76,9 +68,9 @@ function extract_procedureSignature(index, code, type) {
         console.log("re: ", re)
         console.log("code:", code)
     }
-    // console.log('out object to be returned:', out)
     return out;
 }
+
 //TODO: Combine these two sections
 function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let index = 1;
@@ -86,11 +78,7 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _public = extract_methods(type, cls, true);
     if (_public) {
         _public.forEach((sub) => {
-            let {name, sign, end, absName, params, params2} = extract_procedureSignature(index, sub, type);
-            if (type === 'PROPERTY') {
-                // console.log('Property sign: ', sign)
-                // console.log('Property name: ', name)
-            }
+            let { name, sign, end, absName, params, params2 } = extract_procedureSignature(index, sub, type);
             let _upper = name.toUpperCase();
             _methods[_upper] = {
                 name, sign, end, absName, params, params2,
@@ -101,18 +89,18 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
             }
             index++;
             _clsRemaining = _clsRemaining.replace(sub, 'PUBLIC_' + type + '_' + _upper)
-            clsNoMethods = clsNoMethods.replace(sub, '')
+            g_clsNoMethods = g_clsNoMethods.replace(sub, '')
         })
     }
     let _private = extract_methods(type, cls, false);
     if (_private) {
         _private.forEach((sub) => {
-            let {name, sign, end, absName, params, params2} = extract_procedureSignature(index, sub, type);
+            let { name, sign, end, absName, params, params2 } = extract_procedureSignature(index, sub, type);
             let _upper = name.toUpperCase();
             // since private method can be defined without 'private';
             // first we are capturing all public method in above if condition
             // and then adding only remaining methods
-            if (!_methods.hasOwnProperty(_upper)) { 
+            if (!_methods.hasOwnProperty(_upper)) {
                 _methods[_upper] = {
                     name, sign, end, absName, params, params2,
                     code: FUNC.compress(sub),
@@ -122,7 +110,7 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
                 }
                 index++;
                 _clsRemaining = _clsRemaining.replace(sub, 'PRIVATE_' + type + '_' + _upper)
-                clsNoMethods = clsNoMethods.replace(sub, '')
+                g_clsNoMethods = g_clsNoMethods.replace(sub, '')
             }
         })
     }
@@ -138,7 +126,7 @@ function extractVBSFileMethods() {
     classes.forEach((cls) => {
         let clsName = extract_className(cls);
         global.master = global.master.replace(cls, `\tCLASS_${clsName}\n\n`)
-        //console.log('remaining:', global.master)
+
         let _class = {
             name: clsName,
             body: FUNC.compress(cls)
@@ -152,14 +140,14 @@ function extractVBSFileMethods() {
         }
 
         let _structure = cls;
-        clsNoMethods = cls;
+        g_clsNoMethods = cls;
 
         _structure = extractProcedures(cls, 'PROPERTY', _class, _structure)
         _structure = extractProcedures(cls, 'SUB', _class, _structure)
         _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
         _class.structure = _structure
-        
-        _class.noMethods = FUNC.removeEmptyLines(clsNoMethods);
+
+        _class.noMethods = FUNC.removeEmptyLines(g_clsNoMethods);
 
         newClasses.push(_class)
 
