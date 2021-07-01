@@ -1,4 +1,4 @@
-Extendable Class ClassA
+Class ClassA
 
     Private m_PubProp
 
@@ -25,7 +25,7 @@ Extendable Class ClassA
     End Function
 End Class
 
-Extendable Class ClassB extends ClassA
+Class ClassB extends ClassA
 
     Private m_PubProp2
 

@@ -16,8 +16,6 @@ function extract_methods(type, code, pub=false) {
 }
 
 function extract_classes(code) {
-    // var re = new RegExp('([\\s]*EXTENDABLE)*[\\s]*CLASS[\\s]*(?:.*[\\r\\n])*?(.*)END CLASS[\\s]*', 'igm');
-    // var re = /((?:[\s]*EXTENDABLE)*[\s]*CLASS[\s]*(?:.*[\r\n])*?(?:.*)END CLASS[\s]*)/igm
     return code.match(RX.EXTRACT_CLASSES)
 }
 
@@ -27,13 +25,6 @@ function classExtends(code) {
     var match = re.exec(code);
     // console.log('match', match)
     return match ? { base: match[1], _extends: match[2] } : null
-}
-
-function isClassExtendable(code) {
-    // var re = new RegExp('CLASS[\s]+(\w+)[\s]+(?:extends[\s]+(\w+))(.*)END Class', 'igsm')
-    var re = /EXTENDABLE[\s]+CLASS[\s]+(\w+)[\s]+(?:.*)END Class/igsm
-    var match = re.exec(code);
-    return match ? true: false
 }
 
 function extract_className(code) {
@@ -151,10 +142,6 @@ function extractVBSFileMethods() {
         let _class = {
             name: clsName,
             body: FUNC.compress(cls)
-        }
-
-        if (isClassExtendable(cls)) {
-            _class.isExtendable = true
         }
 
         let ext = classExtends(cls);

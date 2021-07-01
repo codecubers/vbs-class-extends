@@ -713,7 +713,7 @@ Public Sub Import(file)
 End Sub
 
 
-'================= File: C:\Users\nanda\Github\vbs-method-parser\test\test-inheritence-out.vbs =================
+'================= File: C:\Users\nanda\git\xps.local.npm\nodejsconsole\vbs-method-parser\test\test-inheritence-out.vbs =================
 ' Build: test-inheritence.vbs
 
 	Class ClassA
@@ -856,7 +856,7 @@ Public Sub OuterSUb
 End SUb
 
 
-'================= File: C:\Users\nanda\Github\vbs-method-parser\test.vbs =================
+'================= File: C:\Users\nanda\git\xps.local.npm\nodejsconsole\vbs-method-parser\test.vbs =================
 Include(".\test\test-inheritence-out")
 dim cca
 set cca = new ClassCA

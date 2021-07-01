@@ -79,7 +79,7 @@ let COMMENTS_NEWLINE = /(^[ \t]*(?:'(?:.*))$)/gm
 let COMMENTS_INLINE_NO_QUOTES = /([ \t]*'(?:[^\n"])*$)/gm
 let EMPTY_LINE_TWO_OR_MORE = /([ \t]*[\r\n]){3,}/gm
 
-let EXTRACT_CLASSES = /((?:[\s]*EXTENDABLE)*[\s]*CLASS[\s]*(?:.*[\r\n])*?(?:.*)END CLASS[\s]*)/igm
+let EXTRACT_CLASSES = /([\s]*CLASS[\s]*(?:.*[\r\n])*?(?:.*)END CLASS[\s]*)/igm
 
 module.exports = {
     SUB_NAME,

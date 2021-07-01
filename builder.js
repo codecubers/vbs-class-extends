@@ -3,20 +3,16 @@ const { removeEmptyLines, deCompress, flatToTree, appendMethod, addSuperPublicMe
 const classes = require('./test/test-inheritence-classes.json');
 
 let classNames = []
-// let extendables = {}
 let extending = []
 let classObjects = {}
 
 classes.forEach(cls => {
-    let { name, /*isExtendable, */ isExtends, extendsClass } = cls;
+    let { name, isExtends, extendsClass } = cls;
     if (classNames.includes(name)) {
         throw new Error(`Class ${name} is already declare. Cannot be added again.`)
     }
     classNames.push(name);
     classObjects[name] = cls;
-    // if (isExtendable) {
-    //     extendables[name] = cls;
-    // }
     if (isExtends) {
         extending.push({
             child: name,
@@ -57,9 +53,7 @@ classes.forEach(cls => {
         ? deCompress(classResolved[name])
         : deCompress(body);
 
-    newClassBody = newClassBody
-        .replace(/[\s]*EXTENDABLE[\s]*/i, '')
-        .replace(/[\s]*EXTENDS[\s]*(.*)/i, '');
+    newClassBody = newClassBody.replace(/[\s]*EXTENDS[\s]*(.*)/i, '');
     newClassBody = removeEmptyLines(newClassBody)
     // console.log('replacing class : ', name)
     outStructure = outStructure.replace(`CLASS_${name}`, newClassBody);

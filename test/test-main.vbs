@@ -1,4 +1,4 @@
-Extendable Class Excel
+Class Excel
 
 	private m_index
 

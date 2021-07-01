@@ -1,8 +1,7 @@
 [
   {
     "name": "ClassA",
-    "body": "Extendable Class ClassA\n\n    Private m_PubProp\n\n    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property\n\n    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property\n\n    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub\n\n    Public Function PubFunc\r\n        PubFunc = \"I'm a func\"\r\n    End Function\r\nEnd Class\n\n",
-    "isExtendable": true,
+    "body": "Class ClassA\n\n    Private m_PubProp\n\n    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property\n\n    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property\n\n    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub\n\n    Public Function PubFunc\r\n        PubFunc = \"I'm a func\"\r\n    End Function\r\nEnd Class\n\n",
     "propertys": {
       "PUBPROP.GET": {
         "name": "PubProp.Get",
@@ -67,13 +66,12 @@
         "isPublic": true
       }
     },
-    "structure": "Extendable Class ClassA\n\n    Private m_PubProp\n\nPUBLIC_PROPERTY_PUBPROP.GET\n\nPUBLIC_PROPERTY_PUBPROP.SET\n\nPUBLIC_PROPERTY_PUBPROPLET.LET\n\nPUBLIC_SUB_PUBSUB\n\nPUBLIC_FUNCTION_PUBFUNC\r\nEnd Class\n\n",
-    "noMethods": "Extendable Class ClassA\n\n    Private m_PubProp\n\nEnd Class\n\n"
+    "structure": "Class ClassA\n\n    Private m_PubProp\n\nPUBLIC_PROPERTY_PUBPROP.GET\n\nPUBLIC_PROPERTY_PUBPROP.SET\n\nPUBLIC_PROPERTY_PUBPROPLET.LET\n\nPUBLIC_SUB_PUBSUB\n\nPUBLIC_FUNCTION_PUBFUNC\r\nEnd Class\n\n",
+    "noMethods": "Class ClassA\n\n    Private m_PubProp\n\nEnd Class\n\n"
   },
   {
     "name": "ClassB",
-    "body": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp2\n\n    Public Property Get PubProp2\r\n        PubProp2 = m_PubProp2\r\n    End Property\n\n    Public Function PubFunc2(i, j)\r\n        k = i + j\r\n        PubFunc2 = k\r\n    End Function\r\nEnd Class\n\n",
-    "isExtendable": true,
+    "body": "Class ClassB extends ClassA\n\n    Private m_PubProp2\n\n    Public Property Get PubProp2\r\n        PubProp2 = m_PubProp2\r\n    End Property\n\n    Public Function PubFunc2(i, j)\r\n        k = i + j\r\n        PubFunc2 = k\r\n    End Function\r\nEnd Class\n\n",
     "isExtends": true,
     "extendsClass": "ClassA",
     "propertys": {
@@ -102,8 +100,8 @@
         "isPublic": true
       }
     },
-    "structure": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp2\n\nPUBLIC_PROPERTY_PUBPROP2.GET\n\nPUBLIC_FUNCTION_PUBFUNC2\r\nEnd Class\n\n",
-    "noMethods": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp2\n\nEnd Class\n\n"
+    "structure": "Class ClassB extends ClassA\n\n    Private m_PubProp2\n\nPUBLIC_PROPERTY_PUBPROP2.GET\n\nPUBLIC_FUNCTION_PUBFUNC2\r\nEnd Class\n\n",
+    "noMethods": "Class ClassB extends ClassA\n\n    Private m_PubProp2\n\nEnd Class\n\n"
   },
   {
     "name": "ClassCA",
