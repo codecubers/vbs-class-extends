@@ -17,3 +17,4 @@ fso.writeFileSync('./test/test-inheritence-classes.json', JSON.stringify(newClas
 // Resolve each class super methods in-memory before writing. Also, circlar reference error need to be assessed before writing to output.
 // Ability to delete in-line comments even if they include complex double-quotes
 // Overridden methods should not be copied.
+// Any default sub/func/prop copied from super class will be treated 'non-default'

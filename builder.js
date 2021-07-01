@@ -11,7 +11,7 @@ classes.forEach(cls => {
     let { name, /*isExtendable, */ isExtends, extendsClass } = cls;
     if (classNames.includes(name)) {
         throw new Error(`Class ${name} is already declare. Cannot be added again.`)
-    } 
+    }
     classNames.push(name);
     classObjects[name] = cls;
     // if (isExtendable) {
@@ -52,17 +52,17 @@ Object.keys(leaves).forEach((leave) => {
 
 let outStructure = fs.readFileSync('test/test-inheritence-remaining.vbs').toString();
 classes.forEach(cls => {
-    let {name, body } = cls;
-    let newClassBody = (classResolved.hasOwnProperty(name)) 
-                ? deCompress(classResolved[name])
-                : deCompress(body);
-    
+    let { name, body } = cls;
+    let newClassBody = (classResolved.hasOwnProperty(name))
+        ? deCompress(classResolved[name])
+        : deCompress(body);
+
     newClassBody = newClassBody
-                .replace(/[\s]*EXTENDABLE[\s]*/i, '')
-                .replace(/[\s]*EXTENDS[\s]*(.*)/i, '');
+        .replace(/[\s]*EXTENDABLE[\s]*/i, '')
+        .replace(/[\s]*EXTENDS[\s]*(.*)/i, '');
     newClassBody = removeEmptyLines(newClassBody)
-    console.log('replacing class : ', name)
+    // console.log('replacing class : ', name)
     outStructure = outStructure.replace(`CLASS_${name}`, newClassBody);
 });
-console.log(outStructure)
+// console.log(outStructure)
 fs.writeFileSync(`test/test-inheritence-out.vbs`, '\' Build: test-inheritence.vbs\n\n' + outStructure)

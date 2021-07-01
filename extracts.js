@@ -58,12 +58,7 @@ function extract_procedureSignature(index, code, type) {
         if (m.index === re.lastIndex) {
             re.lastIndex++;
         }
-        //console.log(m)
-        // The result can be accessed through the `m`-variable.
-        // if (type === 'PROPERTY') 
-        // console.log("re:", re)
-        // if (type === 'PROPERTY') 
-        // console.log('index:' + index + ' code:', code);
+        
         m.forEach((match, groupIndex) => {
             // if (type === 'PROPERTY') console.log(`Found match, group ${groupIndex}: ${match}`);
         });
@@ -83,6 +78,7 @@ function extract_procedureSignature(index, code, type) {
             out.name = match[4];
         }
         out.params = match[5]
+        out.params2 = match[6]
         out.end = match[7]
     } else {
         console.log("ERROR while exracting signature")
@@ -99,14 +95,14 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _public = extract_methods(type, cls, true);
     if (_public) {
         _public.forEach((sub) => {
-            let {name, sign, end, absName, params} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end, absName, params, params2} = extract_procedureSignature(index, sub, type);
             if (type === 'PROPERTY') {
                 // console.log('Property sign: ', sign)
                 // console.log('Property name: ', name)
             }
             let _upper = name.toUpperCase();
             _methods[_upper] = {
-                name, sign, end, absName, params,
+                name, sign, end, absName, params, params2,
                 code: FUNC.compress(sub),
                 body: extractBody(sub, sign, end),
                 index: index,
@@ -120,11 +116,14 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     let _private = extract_methods(type, cls, false);
     if (_private) {
         _private.forEach((sub) => {
-            let {name, sign, end, absName, params} = extract_procedureSignature(index, sub, type);
+            let {name, sign, end, absName, params, params2} = extract_procedureSignature(index, sub, type);
             let _upper = name.toUpperCase();
-            if (!_methods.hasOwnProperty(_upper)) {
+            // since private method can be defined without 'private';
+            // first we are capturing all public method in above if condition
+            // and then adding only remaining methods
+            if (!_methods.hasOwnProperty(_upper)) { 
                 _methods[_upper] = {
-                    name, sign, end, absName, params,
+                    name, sign, end, absName, params, params2,
                     code: FUNC.compress(sub),
                     body: extractBody(sub, sign, end),
                     index: index,

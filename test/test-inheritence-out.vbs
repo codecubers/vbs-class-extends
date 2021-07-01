@@ -17,6 +17,7 @@
     End Property
 
     Public Default Sub PubSub(i, j)
+        dim k
         k = i + j
         WScript.Echo "K is (i + j): " & k
     End Sub
@@ -30,7 +31,7 @@ End Class
 
 	Class ClassB
 
-    Private m_PubProp
+    Private m_PubProp2
 
     Private m_ClassA
 
@@ -47,24 +48,24 @@ End Class
     End Function
 
     Public Property Get PubProp()
-        PubProp.Get = m_ClassA.PubProp()
+        PubProp = m_ClassA.PubProp()
     End Property
 
     Public Property Set PubProp(Value)
-        PubProp.Set = m_ClassA.PubProp(Value)
+        set m_ClassA.PubProp = Value
     End Property
 
     Public Property Let PubPropLet(Value)
-        PubPropLet.Let = m_ClassA.PubPropLet(Value)
+        m_ClassA.PubPropLet = Value
     End Property
 
-    Public Default Property Get PubProp
-        PubProp = m_PubProp
+    Public Property Get PubProp2
+        PubProp2 = m_PubProp2
     End Property
 
-    Public Function PubFunc(i, j)
+    Public Function PubFunc2(i, j)
         k = i + j
-        PubFunc = k
+        PubFunc2 = k
     End Function
 End Class
 
@@ -91,15 +92,15 @@ End Class
     End Function
 
     Public Property Get PubProp()
-        PubProp.Get = m_ClassA.PubProp()
+        PubProp = m_ClassA.PubProp()
     End Property
 
     Public Property Set PubProp(Value)
-        PubProp.Set = m_ClassA.PubProp(Value)
+        set m_ClassA.PubProp = Value
     End Property
 
     Public Property Let PubPropLet(Value)
-        PubPropLet.Let = m_ClassA.PubPropLet(Value)
+        m_ClassA.PubPropLet = Value
     End Property
 
 End Class
@@ -118,12 +119,12 @@ End Class
 
     ENd Sub
 
-    Public Function PubFunc(i, j)
-        PubFunc = m_ClassB.PubFunc(i, j)
+    Public Function PubFunc2(i, j)
+        PubFunc2 = m_ClassB.PubFunc2(i, j)
     End Function
 
-    Public Default Property Get PubProp
-        PubProp.Get = m_ClassB.PubProp
+    Public Property Get PubProp2
+        PubProp2 = m_ClassB.PubProp2
     End Property
 
 End Class

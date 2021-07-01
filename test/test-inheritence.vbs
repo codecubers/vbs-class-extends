@@ -15,6 +15,7 @@ Extendable Class ClassA
     End Property
 
     Public Default Sub PubSub(i, j)
+        dim k
         k = i + j
         WScript.Echo "K is (i + j): " & k
     End Sub
@@ -26,15 +27,15 @@ End Class
 
 Extendable Class ClassB extends ClassA
 
-    Private m_PubProp
+    Private m_PubProp2
 
-    Public Default Property Get PubProp
-        PubProp = m_PubProp
+    Public Property Get PubProp2
+        PubProp2 = m_PubProp2
     End Property
 
-    Public Function PubFunc(i, j)
+    Public Function PubFunc2(i, j)
         k = i + j
-        PubFunc = k
+        PubFunc2 = k
     End Function
 End Class
 

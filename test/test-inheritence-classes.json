@@ -1,7 +1,7 @@
 [
   {
     "name": "ClassA",
-    "body": "Extendable Class ClassA\n\n    Private m_PubProp\n\n    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property\n\n    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property\n\n    Public Default Sub PubSub(i, j)\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub\n\n    Public Function PubFunc\r\n        PubFunc = \"I'm a func\"\r\n    End Function\r\nEnd Class\n\n",
+    "body": "Extendable Class ClassA\n\n    Private m_PubProp\n\n    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property\n\n    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property\n\n    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub\n\n    Public Function PubFunc\r\n        PubFunc = \"I'm a func\"\r\n    End Function\r\nEnd Class\n\n",
     "isExtendable": true,
     "propertys": {
       "PUBPROP.GET": {
@@ -10,6 +10,7 @@
         "end": "End Property",
         "absName": "PubProp",
         "params": "()",
+        "params2": "",
         "code": "    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property",
         "body": "\r\n        PubProp = m_PubProp\r\n    ",
         "index": 1,
@@ -21,6 +22,7 @@
         "end": "End Property",
         "absName": "PubProp",
         "params": "(Value)",
+        "params2": "Value",
         "code": "    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property",
         "body": "\r\n        Set m_PubProp = Value\r\n    ",
         "index": 2,
@@ -32,6 +34,7 @@
         "end": "End Property",
         "absName": "PubPropLet",
         "params": "(Value)",
+        "params2": "Value",
         "code": "    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property",
         "body": "\r\n        m_PubProp = Value\r\n    ",
         "index": 3,
@@ -45,8 +48,9 @@
         "end": "End Sub",
         "absName": "PubSub",
         "params": "(i, j)",
-        "code": "    Public Default Sub PubSub(i, j)\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub",
-        "body": "\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    ",
+        "params2": "i, j",
+        "code": "    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub",
+        "body": "\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    ",
         "index": 1,
         "isPublic": true
       }
@@ -68,37 +72,38 @@
   },
   {
     "name": "ClassB",
-    "body": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp\n\n    Public Default Property Get PubProp\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Function PubFunc(i, j)\r\n        k = i + j\r\n        PubFunc = k\r\n    End Function\r\nEnd Class\n\n",
+    "body": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp2\n\n    Public Property Get PubProp2\r\n        PubProp2 = m_PubProp2\r\n    End Property\n\n    Public Function PubFunc2(i, j)\r\n        k = i + j\r\n        PubFunc2 = k\r\n    End Function\r\nEnd Class\n\n",
     "isExtendable": true,
     "isExtends": true,
     "extendsClass": "ClassA",
     "propertys": {
-      "PUBPROP.GET": {
-        "name": "PubProp.Get",
-        "sign": "Public Default Property Get PubProp",
+      "PUBPROP2.GET": {
+        "name": "PubProp2.Get",
+        "sign": "Public Property Get PubProp2",
         "end": "End Property",
-        "absName": "PubProp",
-        "code": "    Public Default Property Get PubProp\r\n        PubProp = m_PubProp\r\n    End Property",
-        "body": "\r\n        PubProp = m_PubProp\r\n    ",
+        "absName": "PubProp2",
+        "code": "    Public Property Get PubProp2\r\n        PubProp2 = m_PubProp2\r\n    End Property",
+        "body": "\r\n        PubProp2 = m_PubProp2\r\n    ",
         "index": 1,
         "isPublic": true
       }
     },
     "functions": {
-      "PUBFUNC": {
-        "name": "PubFunc",
-        "sign": "Public Function PubFunc(i, j)",
+      "PUBFUNC2": {
+        "name": "PubFunc2",
+        "sign": "Public Function PubFunc2(i, j)",
         "end": "End Function",
-        "absName": "PubFunc",
+        "absName": "PubFunc2",
         "params": "(i, j)",
-        "code": "    Public Function PubFunc(i, j)\r\n        k = i + j\r\n        PubFunc = k\r\n    End Function",
-        "body": "\r\n        k = i + j\r\n        PubFunc = k\r\n    ",
+        "params2": "i, j",
+        "code": "    Public Function PubFunc2(i, j)\r\n        k = i + j\r\n        PubFunc2 = k\r\n    End Function",
+        "body": "\r\n        k = i + j\r\n        PubFunc2 = k\r\n    ",
         "index": 1,
         "isPublic": true
       }
     },
-    "structure": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp\n\nPUBLIC_PROPERTY_PUBPROP.GET\n\nPUBLIC_FUNCTION_PUBFUNC\r\nEnd Class\n\n",
-    "noMethods": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp\n\nEnd Class\n\n"
+    "structure": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp2\n\nPUBLIC_PROPERTY_PUBPROP2.GET\n\nPUBLIC_FUNCTION_PUBFUNC2\r\nEnd Class\n\n",
+    "noMethods": "Extendable Class ClassB extends ClassA\n\n    Private m_PubProp2\n\nEnd Class\n\n"
   },
   {
     "name": "ClassCA",
