@@ -1,3 +1,3 @@
 # vbs-method-parser
 
-Read And Parser vbscript files
+Resolve extended classes in vbscript

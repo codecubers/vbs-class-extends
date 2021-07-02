@@ -1,7 +1,7 @@
 {
   "name": "vbs-method-parser",
-  "version": "1.0.0",
-  "description": "Read And Parser vbscript files",
+  "version": "1.0.1",
+  "description": "Resolve extended classes in vbscript",
   "main": "index.js",
   "author": {
     "name": "Praveen Kumar Nandagiri",

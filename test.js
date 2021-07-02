@@ -13,15 +13,20 @@ let midJson = inVbs.replace('.vbs', '-classes.json');
 // Extract the classes
 let source = fs.readFileSync(inVbs).toString();
 extractVBSFileMethods(source).then((extracts)=>{
-    let { classes, skeleton } = extracts;    
+    let { classes, skeleton, iExtends, source } = extracts;    
     fs.writeFileSync(midJson, JSON.stringify(classes, null, 2));
     fs.writeFileSync(midVbs, skeleton);
-    resolveVBSClasses(classes, skeleton).then((resolved)=>{
-        console.log('Extended classes resolved successfully.')
-        fs.writeFileSync(outVbs, resolved);
-    }).catch((error)=>{
-        console.error(error)
-    })
+    if (iExtends === 0) {
+        console.log('No extended classes found to be resolved.')
+        fs.writeFileSync(outVbs, source);
+    } else {
+        resolveVBSClasses(classes, skeleton).then((resolved)=>{
+            console.log('Extended classes resolved successfully.')
+            fs.writeFileSync(outVbs, resolved);
+        }).catch((error)=>{
+            console.error(error)
+        })
+    }
 })
 
 // TODO(s):

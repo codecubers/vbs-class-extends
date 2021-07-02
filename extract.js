@@ -120,10 +120,12 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
 
 async function extractVBSFileMethods(source) {
     return new Promise((resolve, reject) => {
-        source = FUNC.removeCommentsStart(source)
-        source = FUNC.removeEmptyLines(source)
-        let skeletonVbs = source;
-        let classes = extract_classes(source)
+        let _source = source;
+        _source = FUNC.removeCommentsStart(_source)
+        _source = FUNC.removeEmptyLines(_source)
+        let skeletonVbs = _source;
+        let classes = extract_classes(_source)
+        let iExtends = 0;
         let newClasses = classes.reduce((arr, cls) => {
             let clsName = extract_className(cls).toUpperCase();
             skeletonVbs = skeletonVbs.replace(cls, `\tCLASS_${clsName}\n\n`)
@@ -138,6 +140,7 @@ async function extractVBSFileMethods(source) {
                 let { base, _extends } = ext;
                 _class.isExtends = true;
                 _class.extendsClass = _extends.toUpperCase()
+                iExtends++;
             }
 
             let _structure = cls;
@@ -154,7 +157,7 @@ async function extractVBSFileMethods(source) {
             return arr;
 
         }, []);
-        resolve({ classes: newClasses, skeleton: skeletonVbs });
+        resolve({ classes: newClasses, skeleton: skeletonVbs, iExtends, source });
     })
 }
 
