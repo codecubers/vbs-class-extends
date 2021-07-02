@@ -144,9 +144,15 @@ function resolveExtendingClasses(extending, classObjects) {
     let myList = yallist.create()
     let child = leave;
     myList.push(child)
-    while (nodes.hasOwnProperty(child) && nodes[child].parent) {
+    let limit = 20
+    while (nodes.hasOwnProperty(child) && nodes[child].parent && limit > 0) {
       myList.push(nodes[child].parent)
       child = nodes[child].parent;
+      limit--;
+    }
+    if (limit <= 0) {
+      console.log(myList.toArray().join(' -- (extends) --> '))
+      throw new Error(`More than 20 levels of class extension detected. Possible circular extension. Please fix and try again.`)
     }
     myList.reverse()
     let arr = myList.toArray();
