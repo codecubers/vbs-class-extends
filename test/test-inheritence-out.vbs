@@ -26,7 +26,7 @@
     Public Default Sub PubSub(i, j)
         dim k
         k = i + j
-        WScript.Echo "K is (i + j): " & k
+        WScript.Echo "Class CA called Class A's PubSub(i + j): " & k
     End Sub
 
     Public Function PubFunc
@@ -108,3 +108,9 @@ End Class
 
 Public Sub OuterSUb
 End SUb
+
+dim cca, fs
+set cca = new ClassCA
+call cca.pubSub(2, 3)
+set fs = cca.GetFSO
+Wscript.Echo "Calling object property -> My Path:" & fs.GetFile(Wscript.ScriptFullName).path

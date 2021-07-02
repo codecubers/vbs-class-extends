@@ -1,6 +1,6 @@
 {
   "name": "vbs-method-parser",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Resolve extended classes in vbscript",
   "main": "index.js",
   "author": {
@@ -12,10 +12,9 @@
   },
   "dependencies": {
     "lz-string": "^1.4.4",
-    "vbspm": "^1.2.6",
     "yallist": "^4.0.0"
   },
   "scripts": {
-    "test": "node test.js && npx vbspm test.vbs && cscript build/test-bundle.vbs"
+    "test": "node test.js && cscript //nologo test/test-inheritence-out.vbs"
   }
 }

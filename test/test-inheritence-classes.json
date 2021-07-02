@@ -1,7 +1,7 @@
 [
   {
     "name": "CLASSA",
-    "body": "Class ClassA\n\n    Private m_PubProp\r\n    Private fso\n\n    Private Sub Class_Initialize\r\n        set fso = CreateObject(\"scripting.FileSystemObject\")\r\n    End Sub\n\n    Public Property Get GetFSO\r\n        set GetFSO = fso\r\n    End Property\n\n    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property\n\n    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property\n\n    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub\n\n    Public Function PubFunc\r\n        PubFunc = \"I'm a func\"\r\n    End Function\r\nEnd Class\n\n",
+    "body": "Class ClassA\n\n    Private m_PubProp\r\n    Private fso\n\n    Private Sub Class_Initialize\r\n        set fso = CreateObject(\"scripting.FileSystemObject\")\r\n    End Sub\n\n    Public Property Get GetFSO\r\n        set GetFSO = fso\r\n    End Property\n\n    Public Property Get PubProp()\r\n        PubProp = m_PubProp\r\n    End Property\n\n    Public Property Set PubProp(Value)\r\n        Set m_PubProp = Value\r\n    End Property\n\n    Public Property Let PubPropLet(Value)\r\n        m_PubProp = Value\r\n    End Property\n\n    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"Class CA called Class A's PubSub(i + j): \" & k\r\n    End Sub\n\n    Public Function PubFunc\r\n        PubFunc = \"I'm a func\"\r\n    End Function\r\nEnd Class\n\n",
     "propertys": {
       "GETFSO.GET": {
         "name": "GetFSO.Get",
@@ -58,8 +58,8 @@
         "absName": "PubSub",
         "params": "(i, j)",
         "params2": "i, j",
-        "code": "    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    End Sub",
-        "body": "\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"K is (i + j): \" & k\r\n    ",
+        "code": "    Public Default Sub PubSub(i, j)\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"Class CA called Class A's PubSub(i + j): \" & k\r\n    End Sub",
+        "body": "\r\n        dim k\r\n        k = i + j\r\n        WScript.Echo \"Class CA called Class A's PubSub(i + j): \" & k\r\n    ",
         "index": 1,
         "isPublic": true
       },
