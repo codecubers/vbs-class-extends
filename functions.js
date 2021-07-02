@@ -1,4 +1,5 @@
 var _lz = require('lz-string');
+var yallist = require('yallist');
 const RX = require('./constants');
 
 const compress = (str) => str; //_lz.compressToBase64(str);
@@ -54,7 +55,7 @@ const addSuperPublicMethods = (structure, arrMethods, type, superClsName) => {
 }
 
 function extendClass(child, parent) {
-  let { name, extendsClass, subs, functions, propertys, noMethods } = child;
+  let { extendsClass, subs, functions, propertys, noMethods } = child;
 
   let constructor;
   if (subs && subs.CLASS_INITIALIZE) constructor = subs.CLASS_INITIALIZE;
@@ -137,12 +138,9 @@ function flatToTree(data, idKey, parentIdKey, noParentValue = null, bidirectiona
   return { roots, nodes, leaves };
 }
 
-function resolveExtendingClasses(extending, classObjects) {
-  var yallist = require('yallist');
-  let { nodes, leaves } = flatToTree(extending, 'child', 'parent', null, false);
-  return Object.keys(leaves).reduce((obj, leave) => {
+async function getChildLineage(child, nodes) {
+  return new Promise((resolve, reject) => {  
     let myList = yallist.create()
-    let child = leave;
     myList.push(child)
     let limit = 20
     while (nodes.hasOwnProperty(child) && nodes[child].parent && limit > 0) {
@@ -152,18 +150,26 @@ function resolveExtendingClasses(extending, classObjects) {
     }
     if (limit <= 0) {
       console.log(myList.toArray().join(' -- (extends) --> '))
-      throw new Error(`More than 20 levels of class extension detected. Possible circular extension. Please fix and try again.`)
+      // throw new Error(`More than 20 levels of class extension detected. Possible circular extension. Please fix and try again.`)
+      reject(`More than 20 levels of class extension detected. Possible circular extension. Please fix and try again.`)
+    } else {
+      myList.reverse()
+      resolve(myList.toArray())
     }
-    myList.reverse()
-    let arr = myList.toArray();
-    for (let index = 1; index < arr.length; index++) {
-      const _parent = arr[index - 1];
-      const _child = arr[index];
-      obj[_child] = extendClass(classObjects[_child], classObjects[_parent])
-    }
-    return obj;
-  }, {});
+  })
+}
 
+async function resolveExtendingClasses(extending, classObjects) {
+    let { nodes, leaves } = flatToTree(extending, 'child', 'parent', null, false);
+    return Object.keys(leaves).reduce(async (obj, leave) => {
+      let arr = await getChildLineage(leave, nodes);
+      for (let index = 1; index < arr.length; index++) {
+        const _parent = arr[index - 1];
+        const _child = arr[index];
+        obj[_child] = extendClass(classObjects[_child], classObjects[_parent])
+      }
+      return obj;
+    }, {});
 }
 
 module.exports = {

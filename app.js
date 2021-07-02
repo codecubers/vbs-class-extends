@@ -1,10 +1,28 @@
 'use strict';
-const fso = require('fs');
+const fs = require('fs');
+const extendeVBSClasses = require('./builder');
 const EXT = require('./extracts');
-global.master = fso.readFileSync('test/test-inheritence.vbs').toString();
+
+let inVbs = 'test/test-inheritence.vbs';
+let clsVbs = inVbs.replace('.vbs', '-classes.json');
+let midVbs = inVbs.replace('.vbs', '-remaining.vbs');
+let outVbs = inVbs.replace('.vbs', '-out.vbs');
+
+// Extract the classes
+global.master = fs.readFileSync(inVbs).toString();
 let newClasses = EXT.extractVBSFileMethods();
-fso.writeFileSync('./test/test-inheritence-remaining.vbs', global.master)
-fso.writeFileSync('./test/test-inheritence-classes.json', JSON.stringify(newClasses, null, 2));
+// fs.writeFileSync(midVbs, global.master)
+// fs.writeFileSync(clsVbs, JSON.stringify(newClasses, null, 2));
+
+// Resolve and re-write the source vbs
+// const classes = require(clsVbs);
+// let outStructure = fs.readFileSync(midVbs).toString();
+extendeVBSClasses(newClasses, global.master).then((resolved)=>{
+    console.log('Classes resolved successfully.')
+    fs.writeFileSync(outVbs, '\' Build: test-inheritence.vbs\n\n' + resolved)
+}).catch((error)=>{
+    console.error(error)
+})
 
 // TODO(s):
 // Function return types can be objects (Set x = y); Need to capture this information in class.json object and will be added when writing extends class.

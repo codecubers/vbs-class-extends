@@ -16,6 +16,6 @@
     "yallist": "^4.0.0"
   },
   "scripts": {
-    "test": "node app.js && node builder.js && npx vbspm test.vbs && cscript build/test-bundle.vbs"
+    "test": "node app.js && npx vbspm test.vbs && cscript build/test-bundle.vbs"
   }
 }
