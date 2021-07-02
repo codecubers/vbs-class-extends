@@ -2,7 +2,7 @@
   "name": "vbs-method-parser",
   "version": "1.0.0",
   "description": "Read And Parser vbscript files",
-  "main": "app.js",
+  "main": "index.js",
   "author": {
     "name": "Praveen Kumar Nandagiri",
     "email": "pravynandas@gmail.com"
@@ -16,6 +16,6 @@
     "yallist": "^4.0.0"
   },
   "scripts": {
-    "test": "node app.js && npx vbspm test.vbs && cscript build/test-bundle.vbs"
+    "test": "node test.js && npx vbspm test.vbs && cscript build/test-bundle.vbs"
   }
 }

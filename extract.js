@@ -158,6 +158,4 @@ async function extractVBSFileMethods(source) {
     })
 }
 
-module.exports = {
-    extractVBSFileMethods
-}
+module.exports = extractVBSFileMethods

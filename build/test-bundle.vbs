@@ -714,8 +714,6 @@ End Sub
 
 
 '================= File: C:\Users\nanda\git\xps.local.npm\nodejsconsole\vbs-method-parser\test\test-inheritence-out.vbs =================
-' Build: test-inheritence.vbs
-
 	Class ClassA
 
     Private m_PubProp

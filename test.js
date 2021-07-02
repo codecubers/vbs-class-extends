@@ -1,22 +1,29 @@
 'use strict';
 const fs = require('fs');
-const EXT = require('./extracts');
-const extendeVBSClasses = require('./builder');
+const extractVBSFileMethods = require('./extract');
+const resolveVBSClasses = require('./resolve');
+
 
 let inVbs = 'test/test-inheritence.vbs';
 let outVbs = inVbs.replace('.vbs', '-out.vbs');
+let midVbs = inVbs.replace('.vbs', '-remaining.vbs');
+let midJson = inVbs.replace('.vbs', '-classes.json');
+
 
 // Extract the classes
 let source = fs.readFileSync(inVbs).toString();
-EXT.extractVBSFileMethods(source).then((value)=>{
-    let { classes, skeleton } = value;    
-    extendeVBSClasses(classes, skeleton).then((resolved)=>{
-        console.log('Classes resolved successfully.')
-        fs.writeFileSync(outVbs, '\' Build: test-inheritence.vbs\n\n' + resolved)
+extractVBSFileMethods(source).then((extracts)=>{
+    let { classes, skeleton } = extracts;    
+    fs.writeFileSync(midJson, JSON.stringify(classes, null, 2));
+    fs.writeFileSync(midVbs, skeleton);
+    resolveVBSClasses(classes, skeleton).then((resolved)=>{
+        console.log('Extended classes resolved successfully.')
+        fs.writeFileSync(outVbs, resolved);
     }).catch((error)=>{
         console.error(error)
     })
 })
+
 // TODO(s):
 // Function return types can be objects (Set x = y); Need to capture this information in class.json object and will be added when writing extends class.
 // Overriding a super class method in child class with keyword Override (or something similar)

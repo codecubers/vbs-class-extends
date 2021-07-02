@@ -1,5 +1,3 @@
-' Build: test-inheritence.vbs
-
 	Class ClassA
 
     Private m_PubProp

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { removeEmptyLines, deCompress, resolveExtendingClasses } = require('./functions');
-async function extendeVBSClasses(jsonClasses, vbsSkeleton) {
+async function resolveVBSClasses(jsonClasses, vbsSkeleton) {
     return new Promise((resolve, reject) => {
         let duplicateClassCheck = false;
         let duplicateClasses = [];
@@ -51,4 +51,4 @@ async function extendeVBSClasses(jsonClasses, vbsSkeleton) {
     })
 }
 
-module.exports = extendeVBSClasses
+module.exports = resolveVBSClasses
