@@ -137,6 +137,29 @@ function flatToTree(data, idKey, parentIdKey, noParentValue = null, bidirectiona
   return { roots, nodes, leaves };
 }
 
+function resolveExtendingClasses(extending, classObjects) {
+  var yallist = require('yallist');
+  let { nodes, leaves } = flatToTree(extending, 'child', 'parent', null, false);
+  return Object.keys(leaves).reduce((obj, leave) => {
+    let myList = yallist.create()
+    let child = leave;
+    myList.push(child)
+    while (nodes.hasOwnProperty(child) && nodes[child].parent) {
+      myList.push(nodes[child].parent)
+      child = nodes[child].parent;
+    }
+    myList.reverse()
+    let arr = myList.toArray();
+    for (let index = 1; index < arr.length; index++) {
+      const _parent = arr[index - 1];
+      const _child = arr[index];
+      obj[_child] = extendClass(classObjects[_child], classObjects[_parent])
+    }
+    return obj;
+  }, {});
+
+}
+
 module.exports = {
   compress,
   deCompress,
@@ -146,5 +169,5 @@ module.exports = {
   appendMethod,
   addSuperPublicMethods,
   extendClass,
-  flatToTree
+  resolveExtendingClasses
 }

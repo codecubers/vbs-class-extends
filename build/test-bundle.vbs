@@ -749,30 +749,30 @@ End Class
 
     Private m_PubProp2
 
-    Private m_ClassA
+    Private m_CLASSA
 
     Private Sub Class_Initialize
-        set m_ClassA = new ClassA
+        set m_CLASSA = new CLASSA
     End Sub
 
     Public Default Sub PubSub(i, j)
-        call m_ClassA.PubSub(i, j)
+        call m_CLASSA.PubSub(i, j)
     End Sub
 
     Public Function PubFunc
-        PubFunc = m_ClassA.PubFunc
+        PubFunc = m_CLASSA.PubFunc
     End Function
 
     Public Property Get PubProp()
-        PubProp = m_ClassA.PubProp()
+        PubProp = m_CLASSA.PubProp()
     End Property
 
     Public Property Set PubProp(Value)
-        set m_ClassA.PubProp = Value
+        set m_CLASSA.PubProp = Value
     End Property
 
     Public Property Let PubPropLet(Value)
-        m_ClassA.PubPropLet = Value
+        m_CLASSA.PubPropLet = Value
     End Property
 
     Public Property Get PubProp2
@@ -790,33 +790,33 @@ End Class
 	Class ClassCA
     Private index
 
-    Private m_ClassA
+    Private m_CLASSA
 
     Private Sub Class_Initialize
-        set m_ClassA = new ClassA
+        set m_CLASSA = new CLASSA
 
         index = 1
 
     ENd Sub
 
     Public Default Sub PubSub(i, j)
-        call m_ClassA.PubSub(i, j)
+        call m_CLASSA.PubSub(i, j)
     End Sub
 
     Public Function PubFunc
-        PubFunc = m_ClassA.PubFunc
+        PubFunc = m_CLASSA.PubFunc
     End Function
 
     Public Property Get PubProp()
-        PubProp = m_ClassA.PubProp()
+        PubProp = m_CLASSA.PubProp()
     End Property
 
     Public Property Set PubProp(Value)
-        set m_ClassA.PubProp = Value
+        set m_CLASSA.PubProp = Value
     End Property
 
     Public Property Let PubPropLet(Value)
-        m_ClassA.PubPropLet = Value
+        m_CLASSA.PubPropLet = Value
     End Property
 
 End Class
@@ -826,21 +826,21 @@ End Class
 	Class ClassCB
     Private index
 
-    Private m_ClassB
+    Private m_CLASSB
 
     Private Sub Class_Initialize
-        set m_ClassB = new ClassB
+        set m_CLASSB = new CLASSB
 
         index = 2
 
     ENd Sub
 
     Public Function PubFunc2(i, j)
-        PubFunc2 = m_ClassB.PubFunc2(i, j)
+        PubFunc2 = m_CLASSB.PubFunc2(i, j)
     End Function
 
     Public Property Get PubProp2
-        PubProp2 = m_ClassB.PubProp2
+        PubProp2 = m_CLASSB.PubProp2
     End Property
 
 End Class

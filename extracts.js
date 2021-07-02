@@ -124,7 +124,7 @@ function extractVBSFileMethods() {
     global.master = FUNC.removeEmptyLines(global.master)
     let classes = extract_classes(global.master)
     classes.forEach((cls) => {
-        let clsName = extract_className(cls);
+        let clsName = extract_className(cls).toUpperCase();
         global.master = global.master.replace(cls, `\tCLASS_${clsName}\n\n`)
 
         let _class = {
@@ -136,7 +136,7 @@ function extractVBSFileMethods() {
         if (ext) {
             let { base, _extends } = ext;
             _class.isExtends = true;
-            _class.extendsClass = _extends
+            _class.extendsClass = _extends.toUpperCase()
         }
 
         let _structure = cls;
