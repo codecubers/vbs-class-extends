@@ -1,29 +1,22 @@
 'use strict';
 const fs = require('fs');
-const extendeVBSClasses = require('./builder');
 const EXT = require('./extracts');
+const extendeVBSClasses = require('./builder');
 
 let inVbs = 'test/test-inheritence.vbs';
-let clsVbs = inVbs.replace('.vbs', '-classes.json');
-let midVbs = inVbs.replace('.vbs', '-remaining.vbs');
 let outVbs = inVbs.replace('.vbs', '-out.vbs');
 
 // Extract the classes
-global.master = fs.readFileSync(inVbs).toString();
-let newClasses = EXT.extractVBSFileMethods();
-// fs.writeFileSync(midVbs, global.master)
-// fs.writeFileSync(clsVbs, JSON.stringify(newClasses, null, 2));
-
-// Resolve and re-write the source vbs
-// const classes = require(clsVbs);
-// let outStructure = fs.readFileSync(midVbs).toString();
-extendeVBSClasses(newClasses, global.master).then((resolved)=>{
-    console.log('Classes resolved successfully.')
-    fs.writeFileSync(outVbs, '\' Build: test-inheritence.vbs\n\n' + resolved)
-}).catch((error)=>{
-    console.error(error)
+let source = fs.readFileSync(inVbs).toString();
+EXT.extractVBSFileMethods(source).then((value)=>{
+    let { classes, skeleton } = value;    
+    extendeVBSClasses(classes, skeleton).then((resolved)=>{
+        console.log('Classes resolved successfully.')
+        fs.writeFileSync(outVbs, '\' Build: test-inheritence.vbs\n\n' + resolved)
+    }).catch((error)=>{
+        console.error(error)
+    })
 })
-
 // TODO(s):
 // Function return types can be objects (Set x = y); Need to capture this information in class.json object and will be added when writing extends class.
 // Overriding a super class method in child class with keyword Override (or something similar)

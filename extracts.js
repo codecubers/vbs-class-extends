@@ -118,41 +118,44 @@ function extractProcedures(cls, type, _clsObj, _clsRemaining) {
     return _clsRemaining;
 }
 
-function extractVBSFileMethods() {
-    let newClasses = [];
-    global.master = FUNC.removeCommentsStart(global.master)
-    global.master = FUNC.removeEmptyLines(global.master)
-    let classes = extract_classes(global.master)
-    classes.forEach((cls) => {
-        let clsName = extract_className(cls).toUpperCase();
-        global.master = global.master.replace(cls, `\tCLASS_${clsName}\n\n`)
+async function extractVBSFileMethods(source) {
+    return new Promise((resolve, reject) => {
+        source = FUNC.removeCommentsStart(source)
+        source = FUNC.removeEmptyLines(source)
+        let skeletonVbs = source;
+        let classes = extract_classes(source)
+        let newClasses = classes.reduce((arr, cls) => {
+            let clsName = extract_className(cls).toUpperCase();
+            skeletonVbs = skeletonVbs.replace(cls, `\tCLASS_${clsName}\n\n`)
 
-        let _class = {
-            name: clsName,
-            body: FUNC.compress(cls)
-        }
+            let _class = {
+                name: clsName,
+                body: FUNC.compress(cls)
+            }
 
-        let ext = classExtends(cls);
-        if (ext) {
-            let { base, _extends } = ext;
-            _class.isExtends = true;
-            _class.extendsClass = _extends.toUpperCase()
-        }
+            let ext = classExtends(cls);
+            if (ext) {
+                let { base, _extends } = ext;
+                _class.isExtends = true;
+                _class.extendsClass = _extends.toUpperCase()
+            }
 
-        let _structure = cls;
-        g_clsNoMethods = cls;
+            let _structure = cls;
+            g_clsNoMethods = cls;
 
-        _structure = extractProcedures(cls, 'PROPERTY', _class, _structure)
-        _structure = extractProcedures(cls, 'SUB', _class, _structure)
-        _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
-        _class.structure = _structure
+            _structure = extractProcedures(cls, 'PROPERTY', _class, _structure)
+            _structure = extractProcedures(cls, 'SUB', _class, _structure)
+            _structure = extractProcedures(cls, 'FUNCTION', _class, _structure)
+            _class.structure = _structure
 
-        _class.noMethods = FUNC.removeEmptyLines(g_clsNoMethods);
+            _class.noMethods = FUNC.removeEmptyLines(g_clsNoMethods);
 
-        newClasses.push(_class)
+            arr.push(_class)
+            return arr;
 
-    });
-    return newClasses;
+        }, []);
+        resolve({ classes: newClasses, skeleton: skeletonVbs });
+    })
 }
 
 module.exports = {
