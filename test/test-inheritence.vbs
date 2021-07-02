@@ -1,6 +1,15 @@
 Class ClassA
 
     Private m_PubProp
+    Private fso
+
+    Private Sub Class_Initialize
+        set fso = CreateObject("scripting.FileSystemObject")
+    End Sub
+
+    Public Property Get GetFSO
+        set GetFSO = fso
+    End Property
 
     Public Property Get PubProp()
         PubProp = m_PubProp

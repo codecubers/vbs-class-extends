@@ -18,7 +18,7 @@ const appendMethod = (cls, m) => cls.replace('End Class', `\n${m}\nEnd Class`)
 const addSuperPublicMethods = (structure, arrMethods, type, superClsName) => {
   if (!arrMethods) return structure;
   Object.values(arrMethods).forEach((method) => {
-    let { name, sign, isPublic, end, absName, params, params2 } = method
+    let { name, sign, isPublic, end, absName, params, params2, body } = method
     if (isPublic) {
       // let _sign = `Public ${type} ${sign.substring(sign.indexOf(name))}`;
       let callSuper = `${name} = m_${superClsName}.${absName}`
@@ -43,7 +43,13 @@ const addSuperPublicMethods = (structure, arrMethods, type, superClsName) => {
         }
 
         else if (sign.includes(' Get ')) {
-          callSuper = `${absName} = m_${superClsName}.${absName}`
+          let re = new RegExp(`[\\s]+set[\\s]+${absName}[\\s]*=[\\s]*`, 'igsm');
+          // console.log('re:', re.source)
+          if (body.match(re.source)) {
+            callSuper = `set ${absName} = m_${superClsName}.${absName}`
+          } else {
+            callSuper = `${absName} = m_${superClsName}.${absName}`
+          }
           if (params) callSuper += params
         }
       }

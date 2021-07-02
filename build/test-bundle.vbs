@@ -717,6 +717,15 @@ End Sub
 	Class ClassA
 
     Private m_PubProp
+    Private fso
+
+    Private Sub Class_Initialize
+        set fso = CreateObject("scripting.FileSystemObject")
+    End Sub
+
+    Public Property Get GetFSO
+        set GetFSO = fso
+    End Property
 
     Public Property Get PubProp()
         PubProp = m_PubProp
@@ -778,6 +787,10 @@ End Class
     Public Function PubFunc
         PubFunc = m_CLASSA.PubFunc
     End Function
+
+    Public Property Get GetFSO
+        set GetFSO = m_CLASSA.GetFSO
+    End Property
 
     Public Property Get PubProp()
         PubProp = m_CLASSA.PubProp()
