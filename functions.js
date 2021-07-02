@@ -44,8 +44,7 @@ const addSuperPublicMethods = (structure, arrMethods, type, superClsName) => {
 
         else if (sign.includes(' Get ')) {
           let re = new RegExp(`[\\s]+set[\\s]+${absName}[\\s]*=[\\s]*`, 'igsm');
-          // console.log('re:', re.source)
-          if (body.match(re.source)) {
+          if (body.match(re)) {
             callSuper = `set ${absName} = m_${superClsName}.${absName}`
           } else {
             callSuper = `${absName} = m_${superClsName}.${absName}`

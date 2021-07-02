@@ -1,6 +1,6 @@
 {
   "name": "vbs-method-parser",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Resolve extended classes in vbscript",
   "main": "index.js",
   "author": {
