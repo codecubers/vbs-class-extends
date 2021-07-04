@@ -29,3 +29,51 @@ extendVbsClasses(source).then((resolved)=>{
     console.error(error)
 })
 ```
+
+A simple vbscript file below code ("Class B extends A")
+```vbscript
+Class A
+  public Sub hi
+    Wscript.Echo "I'm in Class A"
+  End Sub
+End Class
+
+Class B extends A
+  
+End Class
+
+dim cb
+set cb = new B
+call cb.hi
+```
+
+woule be resolved to... Allowing Class B auto-popualte with public methods from Class A.
+
+```vbscript
+Class A
+  public Sub hi
+    Wscript.Echo "I'm in Class A"
+  End Sub
+End Class
+
+
+
+Class B
+
+    Private m_A
+
+    Private Sub Class_Initialize
+        set m_A = new A
+    End Sub
+
+    public Sub hi
+        call m_A.hi
+    End Sub
+End Class
+
+
+
+dim cb
+set cb = new B
+call cb.hi
+```
