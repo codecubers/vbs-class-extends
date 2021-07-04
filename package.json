@@ -1,20 +1,17 @@
 {
-  "name": "vbs-method-parser",
-  "version": "1.0.4",
+  "name": "@vbsnext/vbs-class-extends",
+  "version": "1.0.5",
   "description": "Resolve extended classes in vbscript",
   "main": "index.js",
   "author": {
     "name": "Praveen Kumar Nandagiri",
     "email": "pravynandas@gmail.com"
   },
-  "publishConfig": {
-    "registry": "https://nodevbs-wvq5k.ondigitalocean.app/"
-  },
   "dependencies": {
     "lz-string": "^1.4.4",
     "yallist": "^4.0.0"
   },
   "scripts": {
-    "test": "node test.js && cscript //nologo test/test-inheritence-out.vbs"
+    "test": "cd test && node test.js && cscript //nologo test-inheritence-out.vbs"
   }
 }

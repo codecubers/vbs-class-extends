@@ -1,10 +1,10 @@
 'use strict';
 const fs = require('fs');
-const extractVBSFileMethods = require('./extract');
-const resolveVBSClasses = require('./resolve');
+const extractVBSFileMethods = require('../extract');
+const resolveVBSClasses = require('../resolve');
 
 
-let inVbs = 'test/test-inheritence.vbs';
+let inVbs = 'test-inheritence.vbs';
 let outVbs = inVbs.replace('.vbs', '-out.vbs');
 let midVbs = inVbs.replace('.vbs', '-remaining.vbs');
 let midJson = inVbs.replace('.vbs', '-classes.json');
