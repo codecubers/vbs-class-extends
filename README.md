@@ -1,4 +1,4 @@
-# vbs-method-parser
+# vbs-class-extends
 
 Resolve extended classes in vbscript
 

@@ -1,6 +1,6 @@
 {
   "name": "@vbsnext/vbs-class-extends",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Resolve extended classes in vbscript",
   "main": "index.js",
   "author": {
@@ -13,5 +13,14 @@
   },
   "scripts": {
     "test": "cd test && node test.js && cscript //nologo test-inheritence-out.vbs"
-  }
+  },
+  "keywords": [
+    "vbs",
+    "vbscript",
+    "classes",
+    "class extends",
+    "oops",
+    "inheritence",
+    "object-oriented"
+  ]
 }
